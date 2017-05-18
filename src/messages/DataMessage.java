@@ -1,0 +1,30 @@
+package messages;
+
+public class DataMessage extends MessageBody {
+	public enum DataType { image, video, audio, navigation; }
+	public DataType type;
+	public byte flag;
+	public byte[] data;
+	
+	public DataMessage(DataType type, byte flag, byte[] data) {
+		this.type = type; 
+		this.flag = flag;
+		this.data = data;
+	}
+	
+	@Override
+	public int length() {
+		return 1 + 1 + data.length;
+	}
+
+	@Override
+	public byte[] buildMessageBody() {
+		byte[] body = new byte[1 + 1 + data.length];
+		body[0] = (byte) type.ordinal();
+		body[1] = flag;
+		for (int i = 0; i < data.length; i++) {
+			body[i+2] = data[i];
+		}
+		return body;
+	}	
+}
