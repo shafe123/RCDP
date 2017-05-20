@@ -1,12 +1,19 @@
 package messages;
 
 public class DataMessage extends MessageBody {
-	public enum DataType { image, video, audio, navigation; }
+	public enum DataType { IMAGE, VIDEO, AUDIO, NAVIGATION; }
+	
 	public DataType type;
 	public byte flag;
 	public byte[] data;
 	
-	public DataMessage(DataType type, byte flag, byte[] data) {
+	public DataMessage(DataType type, byte flag, byte[] data) throws Exception {
+		if (data.length > 127) 
+		{
+			String err = "Size of data is too large to send message.";
+			throw new Exception(err);
+		}
+		
 		this.type = type; 
 		this.flag = flag;
 		this.data = data;
