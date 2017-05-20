@@ -8,8 +8,7 @@ public class DataMessage extends MessageBody {
 	public byte[] data;
 	
 	public DataMessage(DataType type, byte flag, byte[] data) throws Exception {
-		if (data.length > 127) 
-		{
+		if (data.length > 127) {
 			String err = "Size of data is too large to send message.";
 			throw new Exception(err);
 		}
@@ -26,7 +25,7 @@ public class DataMessage extends MessageBody {
 
 	@Override
 	public byte[] buildMessageBody() {
-		byte[] body = new byte[1 + 1 + data.length];
+		byte[] body = new byte[this.length()];
 		body[0] = (byte) type.ordinal();
 		body[1] = flag;
 		for (int i = 0; i < data.length; i++) {
