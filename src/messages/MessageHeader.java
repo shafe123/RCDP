@@ -8,16 +8,14 @@ class MessageHeader {
 	public byte messageID;
 	public byte length;
 	
-	public MessageHeader(Message.MessageType type, int id, MessageBody bdy)
-	{
+	public MessageHeader(Message.MessageType type, int id, MessageBody bdy) {
 		this.type = type;
 		this.messageID = (byte) id;
 		//do we want this to be the entire message length, or just the length of the body?
 		this.length = (byte) bdy.length();
 	}
 	
-	public byte[] buildMessageHeader()
-	{
+	public byte[] buildMessageHeader() {
 		byte[] header = new byte[] { (byte) type.ordinal(), messageID, length };
 		return header;
 	}
