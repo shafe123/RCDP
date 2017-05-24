@@ -1,6 +1,16 @@
 import java.awt.*;
+
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+import javax.net.ssl.HostnameVerifier;
 import javax.swing.*;
+
+import java.net.*;
 
 public class UIReceiver {
    private JFrame mainFrame;
@@ -9,6 +19,13 @@ public class UIReceiver {
    private StringBuffer log = new StringBuffer();
    private int LogStringCount = 0;
    private JScrollPane sp;
+   
+   public int portNumber = 8080;
+   public String hostName = "127.0.0.1";
+   
+   private Socket echoSocket;
+   public PrintWriter out;
+   public BufferedReader in;
 
    public UIReceiver(){
       prepareGUI();
@@ -188,32 +205,63 @@ public class UIReceiver {
    private class ButtonClickListener implements ActionListener{
       public void actionPerformed(ActionEvent e) {
          String command = e.getActionCommand();  
-         String TurnOn = "TurnOn.";
+         String TurnOn = "TurnOn, port number: " + portNumber;
          String TurnOff = "TurnOff";
-         String Up = "Up";
-         String Down = "Down";
-         String Left = "<";
-         String Right = ">";
-         String Forward = "^";
-         String Backward = "v";
-         String Land = "Land";
-         String Auto = "Auto";
-         String Propeller = "Propeller";
-         String Beacon = "Beacon";
+         String Up = "Up commend sent";
+         String Down = "Down commend sent";
+         String Left = "< commend sent";
+         String Right = "> commend sent";
+         String Forward = "^ commend sent";
+         String Backward = "v commend sent";
+         String Land = "Land commend sent";
+         String Auto = "Auto commend sent";
+         String Propeller = "Propeller commend sent";
+         String Beacon = "Beacon commend sent";
          
          
          if( command.equals( "TurnOn" ))  {
         	 Logout(TurnOn);
+        	 try {
+        		 echoSocket = new Socket(hostName, portNumber);
+ 				out = new PrintWriter(echoSocket.getOutputStream(), true);
+ 				in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+ 				String inputLine;
+ 				// Send Receiver Hello
+ 				out.println("ReceiverHello");
+ 				Logout("ReceiverHello sent");
+ 				inputLine = in.readLine();
+ 				
+ 				// After sent Receiver hello, if DroneHello is received, send Received DroneHello
+ 				if (inputLine.equals("DroneHello")){
+ 				Logout("Message from server : "+ inputLine);
+ 				out.println("Received DroneHello");
+ 				Logout("Received DroneHello sent");
+ 				}
+ 				
+ 				
+			} catch (Exception e2) {
+				// TODO: handle exception
+				Logout(e2.getMessage());
+			}
+        	 
          } else if( command.equals( "TurnOff" ) )  {
-        	 Logout(TurnOff);
+				Logout(TurnOff);
+				System.exit(0);
          } else if( command.equals( "Up" ) )  {
-        	 Logout(Up); 
+        	 out.println("Up");
+        	 Logout(Up);
+        	 try {
+				Logout("Receive ACK: " + in.readLine());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				Logout(e1.getMessage());
+			}
          } else if( command.equals( "Down" ) )  {
         	 Logout(Down); 
          } else if( command.equals( "Left" ) )  {
         	 Logout(Left); 
          } else if( command.equals( "Right" ) )  {
-        	 Logout(Right);; 
+        	 Logout(Right);
           } else if( command.equals( "Forward" ) )  {
         	  Logout(Forward); 
           } else if( command.equals( "Backward" ) )  {

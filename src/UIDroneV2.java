@@ -6,14 +6,14 @@ import java.io.*;
 
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
-public class UIDrone {
+public class UIDroneV2 {
    private JFrame mainFrame;
    private JTextArea statusLabel;
    private JPanel controlPanel;
    private StringBuffer log = new StringBuffer();
    private int LogStringCount = 0;
-   private JScrollPane sp;
    
    private Thread serverThread;
 	private String portNumber = "8080";
@@ -22,11 +22,11 @@ public class UIDrone {
 	private Socket clientSocket;
 	private ServerSocket serverSocket;
 
-   public UIDrone(){
+   public UIDroneV2(){
       prepareGUI();
    }
    public static void main(String[] args){
-	  UIDrone swingControlDemo = new UIDrone();  
+	  UIDroneV2 swingControlDemo = new UIDroneV2();  
       swingControlDemo.showEventDemo();       
    }
    private void prepareGUI(){
@@ -37,7 +37,10 @@ public class UIDrone {
       mainFrame.setLayout(new GridLayout(1, 2));
 
       statusLabel = new JTextArea();        
-      sp = new JScrollPane(statusLabel); 
+      statusLabel.setLineWrap(true);
+      statusLabel.setWrapStyleWord(true);
+      DefaultCaret caret = (DefaultCaret) statusLabel.getCaret();
+      caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
       
       
       
@@ -48,9 +51,9 @@ public class UIDrone {
       });    
       controlPanel = new JPanel();
       controlPanel.setLayout(null);
-
+      
+      mainFrame.add(new JScrollPane(statusLabel));
       mainFrame.add(controlPanel);
-      mainFrame.getContentPane().add(sp);
       mainFrame.setVisible(true); 
       
        
@@ -214,11 +217,20 @@ public class UIDrone {
 		log.append(LogStringCount + ":" + logstring + "\n");
 		statusLabel.setText(log.toString());
 	}
+	
+    private void display(final String s) {
+        EventQueue.invokeLater(new Runnable() {
+            //@Override
+            public void run() {
+                statusLabel.append(s + "\u23CE\n");
+            }
+        });
+    }
 
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-			String TurnOn = "TurnOn, port number: " + portNumber;
+			String TurnOn = "TurnOn.";
 			String TurnOff = "TurnOff";
 			String E0000 = "Simulate Error 0000: Can not find drone";
 			String E0001 = "Simulate Error 0001: Connection error";
@@ -264,20 +276,10 @@ public class UIDrone {
 	                    new InputStreamReader(clientSocket.getInputStream()));
 	            ) {
 	                String inputLine;
-	                while ((inputLine = in.readLine()) != null) {
-	                    Logout("Received Message from client: " + inputLine);
-	                    // Send back ACK base on received message
-	                    if (inputLine.equals("ReceiverHello")){
-	                    	out.println("DroneHello");
-	                    	Logout("DroneHello sent");
-	                    } else if(inputLine.equals("Up")){
-	                    	Logout("ACK Up sent");
-	                    	out.println("Up");
-	                    	
-	                    }
-	                     
-	                    
-	                }
+	    			while ((inputLine = in.readLine()) != null) {
+	    				Logout(inputLine);
+	    				out.println(inputLine);
+	    			}
 	            } catch (IOException e) {
 	                Logout("Exception caught when trying to listen on port "
 	                    + portNumber + " or listening for a connection");
