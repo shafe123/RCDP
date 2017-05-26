@@ -7,24 +7,24 @@ public class ControlMessage extends MessageBody {
 	
 	public ControlType type;
 	public CommandTypes command;
-	public String JSON;
+	public String params;
 	
 	
-	public ControlMessage(ControlType type/*, CommandType cmd*/, JSONObject json) throws Exception {
-		if(json.toString().getBytes().length > 128) {
+	public ControlMessage(ControlType type/*, CommandType cmd*/, JSONObject parameters) throws Exception {
+		if(parameters.toString().getBytes().length > 128) {
 			String err = "Size of parameters is too large to send message.";
 			throw new Exception(err);
 		}
 		
 		this.type = type;
-		this.JSON = json.toString();
+		this.params = parameters.toString();
 		
 	}
 	
 	
 	@Override
 	public int length() {
-		return JSON.getBytes().length;
+		return params.getBytes().length;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ControlMessage extends MessageBody {
 		body[0] = (byte) type.ordinal();
 		body[1] = 0;
 		
-		byte[] json = JSON.getBytes();
+		byte[] json = params.getBytes();
 		for (int i = 0; i < json.length; i++)
 		{
 			body[i+2] = json[i];

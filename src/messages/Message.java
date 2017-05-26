@@ -2,6 +2,7 @@ package messages;
 
 public class Message {
 	public enum MessageType {CONTROL, DATA, ERROR}
+	
 	public MessageHeader header;
 	public MessageBody body;
 	
@@ -15,6 +16,11 @@ public class Message {
 		}
 		
 		this.header = new MessageHeader(type, messageID, bdy);
+		
 		this.body = bdy;
 	}
+	
+	//toByte
+	
+	//fromByte
 }

@@ -34,3 +34,4 @@ public class DataMessage extends MessageBody {
 		return body;
 	}	
 }
+//
