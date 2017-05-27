@@ -1,4 +1,5 @@
 package Receiver;
+
 import java.awt.*;
 
 import java.awt.event.*;
@@ -11,6 +12,8 @@ import java.net.Socket;
 import javax.net.ssl.HostnameVerifier;
 import javax.swing.*;
 
+import Drone.DroneServer;
+
 import java.net.*;
 
 public class UIReceiver {
@@ -20,20 +23,20 @@ public class UIReceiver {
 	private StringBuffer log = new StringBuffer();
 	private int LogStringCount = 0;
 	private JScrollPane sp;
+	private JPasswordField passwordField;
 
-	public int portNumber = 8080;
-	public String hostName = "127.0.0.1";
+	public String PORTNUMBER = "8080";
+	public String HOSTNAME = "127.0.0.1";
+	public static UIReceiver swingControlDemo;
 
-	private Socket echoSocket;
-	public PrintWriter out;
-	public BufferedReader in;
+	private ReceiverClient receiverClient;
 
 	public UIReceiver() {
 		prepareGUI();
 	}
 
 	public static void main(String[] args) {
-		UIReceiver swingControlDemo = new UIReceiver();
+		swingControlDemo = new UIReceiver();
 		swingControlDemo.showEventDemo();
 	}
 
@@ -79,6 +82,9 @@ public class UIReceiver {
 		JButton autoButton = new JButton("Auto");
 		JButton propellerButton = new JButton("Propeller");
 		JButton beaconButton = new JButton("Beacon");
+		
+		JLabel pw = new JLabel("Password");
+		passwordField = new JPasswordField(10);
 
 		turnOnButton.setActionCommand("TurnOn");
 		turnOffButton.setActionCommand("TurnOff");
@@ -114,6 +120,9 @@ public class UIReceiver {
 		GridBagConstraints gbs = new GridBagConstraints();
 		controlPanel.setLayout(gbl);
 
+		controlPanel.add(pw);
+		controlPanel.add(passwordField);
+		
 		controlPanel.add(headerLable);
 		controlPanel.add(turnOnButton);
 		controlPanel.add(turnOffButton);
@@ -163,6 +172,30 @@ public class UIReceiver {
 		gbs.ipadx = 30;
 		gbs.ipady = 20;
 		gbl.setConstraints(turnOffButton, gbs);
+		
+		gbs.fill = GridBagConstraints.NONE;
+		gbs.gridwidth = 1;
+		gbs.gridheight = 1;
+		gbs.insets = new Insets(1, 0, 1, 0);
+		gbs.weightx = 1;
+		gbs.weighty = 1;
+		gbs.gridx = 3;
+		gbs.gridy = 1;
+		gbs.ipadx = 30;
+		gbs.ipady = 20;
+		gbl.setConstraints(pw, gbs);
+		
+		gbs.fill = GridBagConstraints.NONE;
+		gbs.gridwidth = 1;
+		gbs.gridheight = 1;
+		gbs.insets = new Insets(1, 0, 1, 0);
+		gbs.weightx = 1;
+		gbs.weighty = 1;
+		gbs.gridx = 4;
+		gbs.gridy = 1;
+		gbs.ipadx = 30;
+		gbs.ipady = 20;
+		gbl.setConstraints(passwordField, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -271,7 +304,7 @@ public class UIReceiver {
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
 		gbl.setConstraints(rollLeftButton, gbs);
-		
+
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
 		gbs.gridheight = 1;
@@ -283,7 +316,7 @@ public class UIReceiver {
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
 		gbl.setConstraints(rollRightButton, gbs);
-		
+
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
 		gbs.gridheight = 1;
@@ -314,7 +347,7 @@ public class UIReceiver {
 	// Anything above this line are for UI
 
 	// display on UI
-	private void display(String logstring) {
+	public void display(String logstring) {
 		LogStringCount++;
 		log.append(LogStringCount + ":" + logstring + "\n");
 		statusLabel.setText(log.toString());
@@ -323,7 +356,7 @@ public class UIReceiver {
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-			String TurnOn = "TurnOn, port number: " + portNumber;
+			String TurnOn = "TurnOn, port number: " + PORTNUMBER;
 			String TurnOff = "TurnOff";
 			String Up = "Up commend sent";
 			String Down = "Down commend sent";
@@ -338,81 +371,57 @@ public class UIReceiver {
 
 			switch (command) {
 			case "TurnOn":
-				 display(TurnOn);
-				 try {
-				 echoSocket = new Socket(hostName, portNumber);
-				 out = new PrintWriter(echoSocket.getOutputStream(), true);
-				 in = new BufferedReader(new
-				 InputStreamReader(echoSocket.getInputStream()));
-				 String inputLine;
-				 // Send Receiver Hello
-				 out.println("ReceiverHello");
-				 display("ReceiverHello sent");
-				 inputLine = in.readLine();
-				
-				 // After sent Receiver hello, if DroneHello is received,
-				 // send Received DroneHello
-				 if (inputLine.equals("DroneHello")) {
-				 display("Message from server : " + inputLine);
-				 out.println("Received DroneHello");
-				 display("Received DroneHello sent");
-				 }
-				
-				 } catch (Exception e2) {
-				 // TODO: handle exception
-				 display(e2.getMessage());
-				 }
+				display(TurnOn);
+				char[] cs = passwordField.getPassword();
+				String PASSWORD = new String(cs);
+				receiverClient = new ReceiverClient(HOSTNAME, PORTNUMBER, PASSWORD,swingControlDemo);
+				Thread t = new Thread(receiverClient);
+				t.start();
+
 				break;
 			case "UP":
-				 out.println("Up");
-				 display(Up);
-				 try {
-				 display("Receive ACK: " + in.readLine());
-				 } catch (IOException e1) {
-				 // TODO Auto-generated catch block
-				 display(e1.getMessage());
-				 }
-				 break;
+				
+				break;
 			case "Down":
-				 out.println("Down");
-				 display(Down);
-				 try {
-				 display("Receive ACK: " + in.readLine());
-				 } catch (IOException e1) {
-				 // TODO Auto-generated catch block
-				 display(e1.getMessage());
-				 }
-				 break;
+				// out.println("Down");
+				// display(Down);
+				// try {
+				// display("Receive ACK: " + in.readLine());
+				// } catch (IOException e1) {
+				// // TODO Auto-generated catch block
+				// display(e1.getMessage());
+				// }
+				break;
 			case "RollLeft":
 				break;
 			case "RollRight":
 				break;
-				
+
 			case "Left":
-				
-				 display(Left);
-				 break;
+
+				display(Left);
+				break;
 			case "Right":
-				 display(Right);
-				 break;
+				display(Right);
+				break;
 			case "Forward":
-				 display(Forward);
-				 break;
+				display(Forward);
+				break;
 			case "Backward":
-				 display(Backward);
-				 break;
+				display(Backward);
+				break;
 			case "Land":
-				 display(Land);
-				 break;
+				display(Land);
+				break;
 			case "Auto":
-				 display(Auto);
-				 break;
+				display(Auto);
+				break;
 			case "Propeller":
-				 display(Propeller);
-				 break;
+				display(Propeller);
+				break;
 			case "Beacon":
-				 display(Beacon);
-				 break;
+				display(Beacon);
+				break;
 			default:
 				break;
 			}
