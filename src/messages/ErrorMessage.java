@@ -6,19 +6,27 @@ public class ErrorMessage extends MessageBody {
 		WEAK_SIGNAL, LOST_SIGNAL; }
 	
 	
-	public byte[] error_code;
+	public ErrorType error_code;
 	
 	public ErrorMessage(ErrorType err) {
-		this.error_code = new byte[] { (byte) err.ordinal() };
+		this.error_code = err;
+	}
+	
+	public ErrorMessage(byte[] hdr) {
+		this.error_code = ErrorType.values()[hdr[0]];
 	}
 
 	@Override
 	public int length() {
-		return error_code.length;
+		return 1;
 	}
 
 	@Override
-	public byte[] buildMessageBody() {
-		return error_code;
+	public byte[] toByteArray() {
+		return new byte[] { (byte) error_code.ordinal() };
+	}
+
+	public static MessageBody fromByteArray(byte[] bdy) {
+		return new ErrorMessage(bdy);
 	}
 }

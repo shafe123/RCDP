@@ -5,5 +5,5 @@ public abstract class MessageBody {
 	public abstract int length();
 	
 	//returns the actual message body as an array of bytes
-	public abstract byte[] buildMessageBody();
+	public abstract byte[] toByteArray();
 }

@@ -1,5 +1,7 @@
 package messages;
 
+import java.util.Arrays;
+
 public class DataMessage extends MessageBody {
 	public enum DataType { IMAGE, VIDEO, AUDIO, NAVIGATION; }
 	
@@ -18,13 +20,19 @@ public class DataMessage extends MessageBody {
 		this.data = data;
 	}
 	
+	public DataMessage(byte[] bdy) {
+		this.type = DataType.values()[bdy[0]];
+		this.flag = bdy[1];
+		this.data = Arrays.copyOfRange(bdy, 2, bdy.length-2);
+	}
+	
 	@Override
 	public int length() {
 		return 1 + 1 + data.length;
 	}
 
 	@Override
-	public byte[] buildMessageBody() {
+	public byte[] toByteArray() {
 		byte[] body = new byte[this.length()];
 		body[0] = (byte) type.ordinal();
 		body[1] = flag;
@@ -32,6 +40,10 @@ public class DataMessage extends MessageBody {
 			body[i+2] = data[i];
 		}
 		return body;
+	}
+
+	public static MessageBody fromByteArray(byte[] bdy) {
+		return new DataMessage(bdy);
 	}	
 }
 //
