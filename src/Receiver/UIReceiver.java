@@ -4,10 +4,14 @@ import java.awt.*;
 
 import java.awt.event.*;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.swing.*;
@@ -30,6 +34,7 @@ public class UIReceiver {
 	public static UIReceiver swingControlDemo;
 
 	private ReceiverClient receiverClient;
+	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
 
 	public UIReceiver() {
 		prepareGUI();
@@ -352,6 +357,10 @@ public class UIReceiver {
 		log.append(LogStringCount + ":" + logstring + "\n");
 		statusLabel.setText(log.toString());
 	}
+	
+	public void inputCommand(){
+		
+	}
 
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -377,52 +386,44 @@ public class UIReceiver {
 				receiverClient = new ReceiverClient(HOSTNAME, PORTNUMBER, PASSWORD,swingControlDemo);
 				Thread t = new Thread(receiverClient);
 				t.start();
-
+				commandQueue.offer("TurnOn");				
 				break;
-			case "UP":
-				
-				break;
-			case "Down":
-				// out.println("Down");
-				// display(Down);
-				// try {
-				// display("Receive ACK: " + in.readLine());
-				// } catch (IOException e1) {
-				// // TODO Auto-generated catch block
-				// display(e1.getMessage());
-				// }
-				break;
-			case "RollLeft":
-				break;
-			case "RollRight":
-				break;
-
-			case "Left":
-
-				display(Left);
-				break;
-			case "Right":
-				display(Right);
-				break;
-			case "Forward":
-				display(Forward);
-				break;
-			case "Backward":
-				display(Backward);
-				break;
-			case "Land":
-				display(Land);
-				break;
-			case "Auto":
-				display(Auto);
-				break;
-			case "Propeller":
-				display(Propeller);
-				break;
-			case "Beacon":
-				display(Beacon);
-				break;
+//			case "UP":
+//				display(Up);
+//				break;
+//			case "Down":
+//				break;
+//			case "RollLeft":
+//				break;
+//			case "RollRight":
+//				break;
+//			case "Left":
+//				display(Left);
+//				break;
+//			case "Right":
+//				display(Right);
+//				break;
+//			case "Forward":
+//				display(Forward);
+//				break;
+//			case "Backward":
+//				display(Backward);
+//				break;
+//			case "Land":
+//				display(Land);
+//				break;
+//			case "Auto":
+//				display(Auto);
+//				break;
+//			case "Propeller":
+//				display(Propeller);
+//				break;
+//			case "Beacon":
+//				display(Beacon);
+//				break;
 			default:
+				display(command+" command sent");
+				commandQueue.offer(command);	
 				break;
 			}
 		}

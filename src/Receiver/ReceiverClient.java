@@ -7,60 +7,58 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ReceiverClient implements Runnable{
-	
+public class ReceiverClient implements Runnable {
+
 	private String HOSTNAME;
 	private String PORTNUMBER;
 	private String PASSWORD;
 	private UIReceiver UI;
-	public String Commend = "";
-	
-	public ReceiverClient(String hostname, String portnumber, String password, UIReceiver ui){
+	public String command;
+	private String STATE;
+
+
+	public ReceiverClient(String hostname, String portnumber, String password, UIReceiver ui) {
 		HOSTNAME = hostname;
 		PORTNUMBER = portnumber;
 		PASSWORD = password;
 		UI = ui;
-		
 	}
-	
-	
 
 	public void run() {
-
-
 
 		try (Socket echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
 				PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-				
-				) {
+
+		) {
 
 			while (true) {
+
+				try {
+					command = UI.commandQueue.take();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					UI.display(e.getMessage());;
+				}
+
 				
-				getCommend();
-				switch (Commend) {
+				switch (command) {
 				case "UP":
+
+					UI.display("ccc" + command);
 					out.println("UP");
-					Commend = "";
+					command = "";
 					break;
 
 				default:
 					break;
 				}
-				
-				
-			}
-        } catch (UnknownHostException e) {
-            UI.display("Don't know about host " + HOSTNAME);
-        } catch (IOException e) {
-            UI.display("Couldn't get I/O for the connection to " +
-                HOSTNAME);
-        } 
-	}
 
-	public void getCommend(){
-		while (Commend.equals("")){
-			
+			}
+		} catch (UnknownHostException e) {
+			UI.display("Don't know about host " + HOSTNAME);
+		} catch (IOException e) {
+			UI.display("Couldn't get I/O for the connection to " + HOSTNAME);
 		}
 	}
 }
