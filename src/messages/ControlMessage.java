@@ -10,24 +10,25 @@ public class ControlMessage extends MessageBody {
 	public enum ControlType { UNIVERSAL, GROUNDED, PREFLIGHT, FLYING, AUTONOMOUS, BEACON; }
 	
 	public ControlType type;
-	public CommandTypes command;
+	public byte command;
 	public JSONObject params;
 	
 	
-	public ControlMessage(ControlType type/*, CommandType cmd*/, JSONObject parameters) throws Exception {
+	public ControlMessage(ControlType type, byte cmd, JSONObject parameters) throws Exception {
 		if(parameters.toString().getBytes().length > 128) {
 			String err = "Size of parameters is too large to send message.";
 			throw new Exception(err);
 		}
 		
 		this.type = type;
+		this.command = cmd;
 		this.params = parameters;
 	}
 	
 	public ControlMessage(byte[] bdy) throws ParseException {
 		this.type = ControlType.values()[bdy[0]];
 		switch (this.type) {
-		case AUTONOMOUS:
+		/*case AUTONOMOUS:
 			break;
 		case BEACON:
 			break;
@@ -38,8 +39,9 @@ public class ControlMessage extends MessageBody {
 		case PREFLIGHT:
 			break;
 		case UNIVERSAL:
-			break;
+			break;*/
 		default:
+			this.command = bdy[1];
 			break;
 		}
 		
