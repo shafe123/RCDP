@@ -46,7 +46,7 @@ public class ControlMessage extends MessageBody {
 		}
 		
 		//convert the last bytes into the JSON Object parameters
-		byte[] byteParams = Arrays.copyOfRange(bdy, 2, bdy.length - 2);
+		byte[] byteParams = Arrays.copyOfRange(bdy, 2, bdy.length);
 		JSONParser parser = new JSONParser();
 		String stringParams = new String(byteParams);
 		this.params = (JSONObject) parser.parse(stringParams);
@@ -55,7 +55,7 @@ public class ControlMessage extends MessageBody {
 	
 	@Override
 	public int length() {
-		return params.toString().getBytes().length;
+		return 2 + params.toString().getBytes().length;
 	}
 
 	@Override

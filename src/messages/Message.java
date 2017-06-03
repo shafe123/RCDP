@@ -30,7 +30,7 @@ public class Message {
 		
 		this.header = MessageHeader.fromByteArray(hdr);
 		
-		byte[] bdy = Arrays.copyOfRange(msg, hdr.length, this.header.length);
+		byte[] bdy = Arrays.copyOfRange(msg, hdr.length, this.header.length + hdr.length);
 		
 		switch (this.header.type) {
 		case CONTROL:
@@ -55,7 +55,7 @@ public class Message {
 		byte[] result = Arrays.copyOf(hdr, hdr.length + bdy.length);
 		
 		//copy the header from position 0 into "result" starting at the end of the header and ending with the end of the body
-		System.arraycopy(hdr, 0, result, hdr.length, bdy.length);
+		System.arraycopy(bdy, 0, result, hdr.length, bdy.length);
 		
 		return result;
 	}
