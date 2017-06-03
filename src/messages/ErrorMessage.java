@@ -25,6 +25,15 @@ public class ErrorMessage extends MessageBody {
 	public byte[] toByteArray() {
 		return new byte[] { (byte) error_code.ordinal() };
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ErrorMessage) {
+			ErrorMessage other = (ErrorMessage) obj;
+			return (this.error_code == other.error_code);
+		}
+		return false;
+	}
 
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new ErrorMessage(bdy);

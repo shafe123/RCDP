@@ -43,6 +43,9 @@ public class TestMessages {
 		
 		byte[] m3byte = Message.toByteArray(m3);
 		Message m4 = Message.fromByteArray(m3byte);
+		
+		boolean test = m3.equals(m4);
+		System.out.println(test);
 	}
 
 }

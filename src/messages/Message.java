@@ -63,4 +63,13 @@ public class Message {
 	public static Message fromByteArray(byte[] msg) throws Exception {
 		return new Message(msg);
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof Message) {
+			Message other = (Message) obj;
+			return (this.header.equals(other.header) && this.body.equals(other.body));
+		}
+		
+		return false;
+	}
 }

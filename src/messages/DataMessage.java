@@ -41,6 +41,16 @@ public class DataMessage extends MessageBody {
 		}
 		return body;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof DataMessage) {
+			DataMessage other = (DataMessage) obj;
+			return (this.flag == other.flag && this.type == other.type && this.data.equals(other.data));
+		}
+		
+		return false;
+	}
 
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new DataMessage(bdy);

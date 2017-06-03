@@ -6,4 +6,6 @@ public abstract class MessageBody {
 	
 	//returns the actual message body as an array of bytes
 	public abstract byte[] toByteArray();
+	
+	public abstract boolean equals(Object obj);
 }

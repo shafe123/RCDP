@@ -35,4 +35,14 @@ class MessageHeader {
 		//use the public constructor to return the MessageHeader
 		return new MessageHeader(hdr);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MessageHeader) {
+			MessageHeader other = (MessageHeader) obj;
+			return (this.type == other.type && this.messageID == other.messageID && this.length == other.length);
+		}
+		
+		return false;
+	}
 }

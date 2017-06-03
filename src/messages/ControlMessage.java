@@ -72,6 +72,15 @@ public class ControlMessage extends MessageBody {
 		
 		return body;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ControlMessage) {
+			ControlMessage other = (ControlMessage) obj;
+			return (this.type == other.type && this.command == other.command && this.params.equals(other.params));
+		}
+		return false;
+	}
 
 	public static MessageBody fromByteArray(byte[] bdy) throws ParseException {
 		return new ControlMessage(bdy);
