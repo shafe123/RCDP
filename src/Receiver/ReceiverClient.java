@@ -29,12 +29,12 @@ public class ReceiverClient implements Runnable {
 	public Message MSG;
 	public String msgID = "0";
 	private Integer droneID= 0;
-	public ControlType controlType = ControlType.GROUNDED;
+	public ControlType status = ControlType.GROUNDED;
 	public boolean automode = false;
 	public boolean propeller = false;
 	public boolean beacon = false;
 	public ControlMessage controlMessage;
-	public Message mup;
+	public Message msg;
 
 	public ReceiverClient(String hostname, String portnumber, String password, UIReceiver ui) {
 		HOSTNAME = hostname;
@@ -44,9 +44,9 @@ public class ReceiverClient implements Runnable {
 	}
 
 	public void run() {
-//		MessageType MSGType;
-//		byte commandbyte;
-//		JSONObject json;
+		MessageType MSGType;
+		byte commandbyte;
+		JSONObject json;
 
 		try (Socket echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
 				// PrintWriter out = new
@@ -72,188 +72,169 @@ public class ReceiverClient implements Runnable {
 				case "TurnOn":
 
 					break;
-				case "Up":
-//					MSGType = MessageType.CONTROL;
-					byte commandbyte = 0x00;
-					JSONObject json = new JSONObject();
-//					json.put("drone_id", droneID);
-					json.put("throttle", "0");
-//					json.put("attitude", "pitch");
-
-					
-					try {
-						ControlMessage controlMessage = new ControlMessage(ControlType.GROUNDED,commandbyte , json);
-						Message mup = new Message(MessageType.CONTROL, 3, controlMessage);
-						byte[] messagebyte = Message.toByteArray(mup);
-						for (byte theByte : messagebyte) {
-							UI.display(Integer.toHexString(theByte));
-						}
-						dOut.writeInt(messagebyte.length);
-						dOut.write(messagebyte);
-
-
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					// UI.display(mup.toString());
-
-
-					break;
 //				case "Up":
 //					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
+//					commandbyte = 0x00;
 //					json = new JSONObject();
-//					json.put("drone_id", droneID);
 //					json.put("throttle", "0");
-//					json.put("attitude", "pitch");
 //
 //					sendMSG(MSGType, commandbyte, json, dOut);
-//
+
 //					break;
-//				case "Down":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "pitch");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//
-//					break;
-//				case "RollLeft":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "roll");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//					break;
-//				case "RollRight":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "roll");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//
-//					break;
-//				case "Left":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "yaw");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//					break;
-//				case "Right":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "yaw");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//					break;
-//				case "Forward":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "forward");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//					break;
-//				case "Backward":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x01;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("throttle", "0");
-//					json.put("attitude", "backward");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//					break;
-//				case "Land":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x03;
-//					json = new JSONObject();
-//					json.put("drone_id", droneID);
-//					json.put("landing_location", "123,123");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
-//					break;
-//				case "Auto":
-//					if (automode) {
-//						MSGType = MessageType.CONTROL;
-//						commandbyte = 0x00;
-//						json = new JSONObject();
-//						json.put("drone_id", droneID);
-//						json.put("automode", "off");
-//						automode = false;
-//
-//						sendMSG(MSGType, commandbyte, json, dOut);
-//					} else {
-//						MSGType = MessageType.CONTROL;
-//						commandbyte = 0x02;
-//						json = new JSONObject();
-//						json.put("drone_id", droneID);
-//						json.put("automode", "on");
-//						automode = true;
-//
-//						sendMSG(MSGType, commandbyte, json, dOut);
-//					}
-//					break;
-//				case "Propeller":
-//					if (propeller) {
-//						MSGType = MessageType.CONTROL;
-//						commandbyte = 0x00;
-//						json = new JSONObject();
-//						json.put("drone_id", droneID);
-//						json.put("propeller", "off");
-//						propeller = false;
-//
-//						sendMSG(MSGType, commandbyte, json, dOut);
-//					} else {
-//						MSGType = MessageType.CONTROL;
-//						commandbyte = 0x02;
-//						json = new JSONObject();
-//						json.put("drone_id", droneID);
-//						json.put("propeller", "on");
-//						propeller = true;
-//
-//						sendMSG(MSGType, commandbyte, json, dOut);
-//					}
-//					break;
-//				case "Beacon":
-//					if (beacon) {
-//						MSGType = MessageType.CONTROL;
-//						commandbyte = 0x00;
-//						json = new JSONObject();
-//						json.put("drone_id", droneID);
-//						json.put("beacon", "off");
-//						beacon = false;
-//
-//						sendMSG(MSGType, commandbyte, json, dOut);
-//					} else {
-//						MSGType = MessageType.CONTROL;
-//						commandbyte = 0x02;
-//						json = new JSONObject();
-//						json.put("drone_id", droneID);
-//						json.put("beacon", "on");
-//						beacon = true;
-//						sendMSG(MSGType, commandbyte, json, dOut);
-//					}
-//					break;
+				case "Up":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "pitch");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+
+					break;
+				case "Down":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "pitch");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+
+					break;
+				case "RollLeft":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "roll");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+					break;
+				case "RollRight":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "roll");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+
+					break;
+				case "Left":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "yaw");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+					break;
+				case "Right":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "yaw");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+					break;
+				case "Forward":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "forward");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+					break;
+				case "Backward":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x01;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("throttle", "0");
+					json.put("attitude", "backward");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+					break;
+				case "Land":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x03;
+					json = new JSONObject();
+					json.put("drone_id", droneID);
+					json.put("landing_location", "123,123");
+
+					sendMSG(MSGType, commandbyte, json, dOut);
+					break;
+				case "Auto":
+					if (automode) {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x00;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("automode", "off");
+						automode = false;
+
+						sendMSG(MSGType, commandbyte, json, dOut);
+					} else {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x02;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("automode", "on");
+						automode = true;
+
+						sendMSG(MSGType, commandbyte, json, dOut);
+					}
+					break;
+				case "Propeller":
+					if (propeller) {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x00;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("propeller", "off");
+						propeller = false;
+
+						sendMSG(MSGType, commandbyte, json, dOut);
+					} else {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x02;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("propeller", "on");
+						propeller = true;
+
+						sendMSG(MSGType, commandbyte, json, dOut);
+					}
+					break;
+				case "Beacon":
+					if (beacon) {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x00;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("beacon", "off");
+						beacon = false;
+
+						sendMSG(MSGType, commandbyte, json, dOut);
+					} else {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x02;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("beacon", "on");
+						beacon = true;
+						sendMSG(MSGType, commandbyte, json, dOut);
+					}
+					break;
 				default:
 					break;
 				}
@@ -295,7 +276,7 @@ public class ReceiverClient implements Runnable {
 	private void sendMSG(MessageType mSGType, byte commandbyte, JSONObject json, DataOutputStream dOut) {
 		// TODO Auto-generated method stub
 		try {
-			ControlMessage controlMessage = new ControlMessage(controlType, commandbyte, json);
+			ControlMessage controlMessage = new ControlMessage(status, commandbyte, json);
 			Message mup = new Message(mSGType, 3, controlMessage);
 			// UI.display(mup.toString());
 			dOut.writeInt(Message.toByteArray(mup).length);
