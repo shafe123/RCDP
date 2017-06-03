@@ -22,6 +22,7 @@ public class UIDrone {
 	private String portNumber = "8080";
 	private String password;
 	private String DroneId;
+	private Integer messageID = 0;
 	
 
 	public UIDrone() {

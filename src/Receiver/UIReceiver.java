@@ -384,45 +384,17 @@ public class UIReceiver {
 				char[] cs = passwordField.getPassword();
 				String PASSWORD = new String(cs);
 				receiverClient = new ReceiverClient(HOSTNAME, PORTNUMBER, PASSWORD,swingControlDemo);
+				 
+//				while(commandQueue.poll() != null){};
+			
 				Thread t = new Thread(receiverClient);
 				t.start();
 				commandQueue.offer("TurnOn");				
 				break;
-//			case "UP":
-//				display(Up);
-//				break;
-//			case "Down":
-//				break;
-//			case "RollLeft":
-//				break;
-//			case "RollRight":
-//				break;
-//			case "Left":
-//				display(Left);
-//				break;
-//			case "Right":
-//				display(Right);
-//				break;
-//			case "Forward":
-//				display(Forward);
-//				break;
-//			case "Backward":
-//				display(Backward);
-//				break;
-//			case "Land":
-//				display(Land);
-//				break;
-//			case "Auto":
-//				display(Auto);
-//				break;
-//			case "Propeller":
-//				display(Propeller);
-//				break;
-//			case "Beacon":
-//				display(Beacon);
-//				break;
+			case "TurnOff":
+				System.exit(0);
 			default:
-				display(command+" command sent");
+				
 				commandQueue.offer(command);	
 				break;
 			}
