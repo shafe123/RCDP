@@ -28,7 +28,7 @@ public class ReceiverClient implements Runnable {
 	private String STATE;
 	public Message MSG;
 	public String msgID = "0";
-	private Integer droneID= 0;
+	private Integer droneID = 0;
 	public ControlType status = ControlType.GROUNDED;
 	public boolean automode = false;
 	public boolean propeller = false;
@@ -62,7 +62,9 @@ public class ReceiverClient implements Runnable {
 			while (true) {
 
 				try {
-					command = UI.commandQueue.take();
+					while((command = UI.commandQueue.take()) == null){
+						
+					};
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					UI.display(e.getMessage());
@@ -72,15 +74,15 @@ public class ReceiverClient implements Runnable {
 				case "TurnOn":
 
 					break;
-//				case "Up":
-//					MSGType = MessageType.CONTROL;
-//					commandbyte = 0x00;
-//					json = new JSONObject();
-//					json.put("throttle", "0");
-//
-//					sendMSG(MSGType, commandbyte, json, dOut);
+				// case "Up":
+				// MSGType = MessageType.CONTROL;
+				// commandbyte = 0x00;
+				// json = new JSONObject();
+				// json.put("throttle", "0");
+				//
+				// sendMSG(MSGType, commandbyte, json, dOut);
 
-//					break;
+				// break;
 				case "Up":
 					MSGType = MessageType.CONTROL;
 					commandbyte = 0x01;
@@ -180,6 +182,7 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("automode", "off");
+						UI.display("auto off");
 						automode = false;
 
 						sendMSG(MSGType, commandbyte, json, dOut);
@@ -189,6 +192,7 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("automode", "on");
+						UI.display("auto on");
 						automode = true;
 
 						sendMSG(MSGType, commandbyte, json, dOut);
@@ -201,6 +205,7 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("propeller", "off");
+						UI.display("propeller off");
 						propeller = false;
 
 						sendMSG(MSGType, commandbyte, json, dOut);
@@ -210,6 +215,7 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("propeller", "on");
+						UI.display("propeller on");
 						propeller = true;
 
 						sendMSG(MSGType, commandbyte, json, dOut);
@@ -222,6 +228,7 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("beacon", "off");
+						UI.display("beacon Off");
 						beacon = false;
 
 						sendMSG(MSGType, commandbyte, json, dOut);
@@ -231,6 +238,7 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("beacon", "on");
+						UI.display("beacon On");
 						beacon = true;
 						sendMSG(MSGType, commandbyte, json, dOut);
 					}
@@ -238,9 +246,27 @@ public class ReceiverClient implements Runnable {
 				default:
 					break;
 				}
-
-				// readACK(dIn);
-
+				
+				int length = dIn.readInt();
+				UI.display(Integer.toString(length));
+//				byte[] messagebyte = new byte[length];
+//				dIn.readFully(messagebyte, 0, messagebyte.length);
+//				try {
+//					msg = Message.fromByteArray(messagebyte);
+//				} catch (Exception e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//				testDisplay(msg);
+//
+//				try {
+//					// readACK(dIn);
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					UI.display(e.getMessage());
+//					
+//				}
+//
 			}
 		} catch (UnknownHostException e) {
 			UI.display("Don't know about host " + HOSTNAME);
@@ -258,18 +284,15 @@ public class ReceiverClient implements Runnable {
 	private void readACK(DataInputStream dIn) throws Exception {
 		// TODO Auto-generated method stub
 		int length;
-		while (true) {
-			if ((length = dIn.readInt()) != 0) {
-				byte[] messagetemp = new byte[length];
-				dIn.readFully(messagetemp, 0, messagetemp.length); // read the
-																	// message
-				Message ACK;
-				ACK = Message.fromByteArray(messagetemp);
+		while ((length = dIn.readInt()) != 0) {
+			byte[] messagebyte = new byte[length];
+			dIn.readFully(messagebyte, 0, messagebyte.length); // read the
+																// message
+			Message ACK;
+			ACK = Message.fromByteArray(messagebyte);
 
-				testDisplay(ACK);
+			testDisplay(ACK);
 
-				break;
-			}
 		}
 	}
 

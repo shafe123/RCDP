@@ -38,16 +38,15 @@ public class DroneServer implements Runnable {
 			int length;
 			while ((length = dIn.readInt()) != 0) {
 				if (length > 0) {
-					byte[] messageb = new byte[length];
-					dIn.readFully(messageb, 0, messageb.length); // read the
+					byte[] messagebyte = new byte[length];
+					dIn.readFully(messagebyte, 0, messagebyte.length); // read the
 																	// message
-					Message m4;
+					Message msg;
 					try {
-						m4 = Message.fromByteArray(messageb);
-						for (byte theByte : Message.toByteArray(m4)) {
-							UI.display(Integer.toHexString(theByte));
-						}
-
+						msg = Message.fromByteArray(messagebyte);
+						testDisplay(msg);
+						dOut.writeInt(Message.toByteArray(msg).length);
+						dOut.write(Message.toByteArray(msg));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						UI.display(e.getMessage());
@@ -98,8 +97,12 @@ public class DroneServer implements Runnable {
 					"Exception caught when trying to listen on port " + PORT_NUMBER + " or listening for a connection");
 			UI.display(e.getMessage());
 		}
-		
-		
 
+	}
+
+	public void testDisplay(Message msg) {
+		for (byte theByte : Message.toByteArray(msg)) {
+			UI.display(Integer.toHexString(theByte));
+		}
 	}
 }
