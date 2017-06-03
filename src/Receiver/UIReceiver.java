@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -32,8 +31,10 @@ public class UIReceiver {
 	public String PORTNUMBER = "8080";
 	public String HOSTNAME = "127.0.0.1";
 	public static UIReceiver swingControlDemo;
+	public Socket echoSocket;
 
 	private ReceiverClient receiverClient;
+	public readACK readACK;
 	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
 
 	public UIReceiver() {
@@ -383,13 +384,24 @@ public class UIReceiver {
 				display(TurnOn);
 				char[] cs = passwordField.getPassword();
 				String PASSWORD = new String(cs);
-				receiverClient = new ReceiverClient(HOSTNAME, PORTNUMBER, PASSWORD,swingControlDemo);
-				 
-//				while(commandQueue.poll() != null){};
-			
-				Thread t = new Thread(receiverClient);
-				t.start();
-				commandQueue.offer("TurnOn");				
+				try {
+					echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
+					receiverClient = new ReceiverClient(echoSocket, swingControlDemo);
+					readACK = new readACK(echoSocket, swingControlDemo);
+					 
+//					while(commandQueue.poll() != null){};
+				
+					Thread t = new Thread(receiverClient);
+					t.start();
+					Thread t1 = new Thread(readACK);
+					t1.start();
+					
+					commandQueue.offer("TurnOn");
+				} catch (NumberFormatException | IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+								
 				break;
 			case "TurnOff":
 				System.exit(0);

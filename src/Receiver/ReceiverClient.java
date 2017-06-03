@@ -35,11 +35,10 @@ public class ReceiverClient implements Runnable {
 	public boolean beacon = false;
 	public ControlMessage controlMessage;
 	public Message msg;
+	public Socket echoSocket;
 
-	public ReceiverClient(String hostname, String portnumber, String password, UIReceiver ui) {
-		HOSTNAME = hostname;
-		PORTNUMBER = portnumber;
-		PASSWORD = password;
+	public ReceiverClient(Socket socket, UIReceiver ui) {
+		echoSocket = socket;
 		UI = ui;
 	}
 
@@ -48,14 +47,14 @@ public class ReceiverClient implements Runnable {
 		byte commandbyte;
 		JSONObject json;
 
-		try (Socket echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
+		try (
 				// PrintWriter out = new
 				// PrintWriter(echoSocket.getOutputStream(),
 				// true);
 				// BufferedReader in = new BufferedReader(new
 				// InputStreamReader(echoSocket.getInputStream()));
 				DataOutputStream dOut = new DataOutputStream(echoSocket.getOutputStream());
-				DataInputStream dIn = new DataInputStream(echoSocket.getInputStream());
+//				DataInputStream dIn = new DataInputStream(echoSocket.getInputStream());
 
 		) {
 
@@ -247,26 +246,8 @@ public class ReceiverClient implements Runnable {
 					break;
 				}
 				
-				int length = dIn.readInt();
-				UI.display(Integer.toString(length));
-//				byte[] messagebyte = new byte[length];
-//				dIn.readFully(messagebyte, 0, messagebyte.length);
-//				try {
-//					msg = Message.fromByteArray(messagebyte);
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//				testDisplay(msg);
-//
-//				try {
-//					// readACK(dIn);
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					UI.display(e.getMessage());
-//					
-//				}
-//
+				
+				
 			}
 		} catch (UnknownHostException e) {
 			UI.display("Don't know about host " + HOSTNAME);

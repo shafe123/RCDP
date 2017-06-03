@@ -47,6 +47,7 @@ public class DroneServer implements Runnable {
 						testDisplay(msg);
 						dOut.writeInt(Message.toByteArray(msg).length);
 						dOut.write(Message.toByteArray(msg));
+						UI.display("ack sent");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						UI.display(e.getMessage());
