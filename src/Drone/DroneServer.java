@@ -34,7 +34,7 @@ public class DroneServer implements Runnable {
 	public int ackmessageId;
 	public Message returnmsg;
 	public boolean isAuthenticate = false;
-	public int messageID = 1000;
+	public int messageID = 100;
 
 
 	public DroneServer(String p_number, String passward, String drone_id, UIDrone ui) {
@@ -100,6 +100,7 @@ public class DroneServer implements Runnable {
 					
 					try {
 						msg = Message.fromByteArray(messagebyte);
+						UI.display("Received Message Detail: \n" + msg.toString());
 						if (isAuthenticate){
 							
 //							droneResponse= droneDFA.authenticate(msg);
@@ -130,13 +131,11 @@ public class DroneServer implements Runnable {
 
 							// if error
 							if (droneResponse.isErrorFlag()){
-								UI.display("3");
 
 								returnmsg = droneResponse.getMessage();
 								UI.display(droneResponse.getErrorMessage());
 								UI.display("error sent");
 							}else{
-								UI.display("4");
 
 								// if not error
 								

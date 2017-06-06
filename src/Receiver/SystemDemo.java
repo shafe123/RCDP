@@ -21,10 +21,18 @@ public class SystemDemo {
    public static void main(String[] args) throws Exception {
 
 	   
-	   
+		byte m3Command = 0x01;
+		JSONObject json = new JSONObject();
+		json.put("unit_type", "receiver");
+		json.put("unit_id", "abcdef");
+		json.put("unit_ipaddress", "123.123.123.123");
+		json.put("version", 1.0);
+		ControlMessage m3bdy = new ControlMessage(ControlType.GROUNDED, m3Command, json);
 
-		AckMessage m5bdy = new AckMessage(3);
-		Message m5 = new Message(MessageType.ACK, 5, m5bdy);
+		Message m5 = new Message(MessageType.CONTROL, 5, m3bdy);
+		byte [] temp = Message.toByteArray(m5);
+		Message m55 = Message.fromByteArray(temp);
+		
 		System.out.println(Message.toByteArray(m5));
 		System.out.println(Message.fromByteArray(Message.toByteArray(m5)));
 		

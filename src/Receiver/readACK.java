@@ -43,11 +43,11 @@ public class readACK implements Runnable {
 					dIn.readFully(messagebyte, 0, messagebyte.length);
 					Message msg;
 					msg = Message.fromByteArray(messagebyte);
+					UI.display("Received Message Detail: \n" + msg.toString());
 //					testDisplay(msg);
 					// if isAuthenticate, the message is ack or err
 					if (isAuthenticate){
 						
-						testDisplay(msg);
 					} else{
 						// if not isAuthenticate, the msg is drone hello
 						UI.display("Drone Hello Received");
