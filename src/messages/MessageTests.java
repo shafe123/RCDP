@@ -41,7 +41,7 @@ public class MessageTests {
 		//templated control message
 		//not currently implemented is using enums for the CommandType, we will have to use bytes until that is implemented
 		//for quick reference on which command is in which position, use the CommandTypes class
-		byte m3Command = 0x00;
+		byte m3Command = 0x01;
 		JSONObject json = new JSONObject();
 		json.put("unit_type", "receiver");
 		json.put("unit_id", "abcdef");
