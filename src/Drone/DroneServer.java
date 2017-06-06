@@ -11,8 +11,12 @@
 * File name: DroneServer.java
 *
 * Description:
+* Implements the main functionality of the drone. Recall that the drone is
+* implemented as a server so it's operations is quite similar with some
+* restrictions on how many clients (i.e. receivers) can connect.
 *
-* Requirements:
+* Requirements (Additional details can be found in the file below):
+* - SERVICE, CONCURRENT
 *
 *=================================================================================
 * */
@@ -30,6 +34,10 @@ import java.net.Socket;
 
 import messages.Message;
 
+/**
+ * DroneServer class implements runnable in order to execute
+ * instanceas as a thread which meets concurrency
+ */
 public class DroneServer implements Runnable {
 	private String PORT_NUMBER;
 	private String PASSWARD;
@@ -37,11 +45,12 @@ public class DroneServer implements Runnable {
 	private UIDrone UI;
 
 	/**
-	 *
-	 * @param p_number
-	 * @param passward
-	 * @param drone_id
-	 * @param ui
+	 * DroneServer constructor that take a port number, password, drone id, and
+	 * a drone user interface
+	 * @param p_number string that represents a port number
+	 * @param passward string that takes a passphrase
+	 * @param drone_id string a unique drone identifier
+	 * @param ui and a UIDrone object
 	 */
 	public DroneServer(String p_number, String passward, String drone_id, UIDrone ui) {
 		PORT_NUMBER = p_number;
@@ -51,6 +60,10 @@ public class DroneServer implements Runnable {
 
 	}
 
+	/**
+	 * Initial section to setup a socket with an associate port number and preparing
+	 * input and output streams
+	 */
 	public void run() {
 
 		try (ServerSocket serverSocket = new ServerSocket(Integer.parseInt(PORT_NUMBER));
@@ -81,6 +94,9 @@ public class DroneServer implements Runnable {
 
 				}
 
+				/**
+				 * UI section to capture the message received
+				 */
 				// UI.display("Received Message from client: " + inputLine);
 
 				// Send back ACK base on received message
@@ -124,9 +140,12 @@ public class DroneServer implements Runnable {
 					"Exception caught when trying to listen on port " + PORT_NUMBER + " or listening for a connection");
 			UI.display(e.getMessage());
 		}
-
 	}
 
+	/**
+	 * TestDisplay initial testing to get things up and running
+	 * @param msg
+	 */
 	public void testDisplay(Message msg) {
 		for (byte theByte : Message.toByteArray(msg)) {
 			UI.display(Integer.toHexString(theByte));
