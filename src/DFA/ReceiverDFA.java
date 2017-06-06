@@ -2,10 +2,12 @@ package DFA;
 
 import org.json.simple.JSONObject;
 
-import Receiver.ReceiverClient;
 import messages.ControlMessage;
+import messages.ErrorMessage;
 import messages.Message;
 import messages.MessageBody;
+import messages.ErrorMessage.ErrorType;
+import messages.Message.MessageType;
 
 /**
  * 
@@ -26,11 +28,14 @@ public class ReceiverDFA extends DFA {
 	
 	/**
 	 * This method is used by Receiver initially to authenticate the Hello Handshake Message from Drone.
+	 * @throws Exception 
 	 */
 	@Override
-	public DFAResponse authenticate(Message message) {
+	public DFAResponse authenticate(Message message) throws Exception {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
+		Message errorMessage = null;
+		int messageID = message.header.messageID;
 		
 		if(messageBody instanceof ControlMessage){
 			ControlMessage controlMessage = (ControlMessage) messageBody;
@@ -39,7 +44,8 @@ public class ReceiverDFA extends DFA {
 			switch (command) {
 			case 0x01:
 						if(!params.containsKey("version")){
-							response = new DFAResponse(message, true, "version field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
+							response = new DFAResponse(errorMessage, true, "version field not present in message params");
 							return response;
 						}
 						
@@ -50,44 +56,52 @@ public class ReceiverDFA extends DFA {
 						params.put("version", version);
 						
 						if(!params.containsKey("random number A")){//Check if random number from receiver is present
-							response = new DFAResponse(message, true, "random number A field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number A field not present in message params");
 							return response;
 						}
 						
 						//Verify random number A sent by drone
 						String randomNumberA = String.valueOf(params.get("random number A"));
 						if(Utility.isEmpty(randomNumberA)){
-							response = new DFAResponse(message, true, "random number A is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number A is null or empty");
 							return response;
 						}
 						
 						if(Utility.isEmpty(randomNumber)){
-							response = new DFAResponse(message, true, "random number for receiver is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number for receiver is null or empty");
 							return response;
 						}
 						
 						if(!randomNumberA.equals(randomNumber)){
-							response = new DFAResponse(message, true, "random number A sent by drone is invalid");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number A sent by drone is invalid");
 							return response;
 						}
 						
 						//Verify random number B sent by drone 
 						if(!params.containsKey("random number B")){//Check if random number from receiver is present
-							response = new DFAResponse(message, true, "random number B field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number B field not present in message params");
 							return response;
 						}
 						String randomNumberB = String.valueOf(params.get("random number B"));
 						if(Utility.isEmpty(randomNumberB)){
-							response = new DFAResponse(message, true, "random number B is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number B is null or empty");
 							return response;
 						}
 						controlMessage.command = 0x02;
 						response = new DFAResponse(message, false, null);
 						return response;
 			default:
-						return new DFAResponse(message, true, "Invalid Command Byte");
+						errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
+						return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 			}
 		}
-		return new DFAResponse(message, true, "Message is not of type Control Message");
+		errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));
+		return new DFAResponse(errorMessage, true, "Message is not of type Control Message");
 	}
 }
