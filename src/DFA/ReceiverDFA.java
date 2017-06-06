@@ -6,6 +6,7 @@ import messages.ControlMessage;
 import messages.ErrorMessage;
 import messages.Message;
 import messages.MessageBody;
+import messages.ControlMessage.ControlType;
 import messages.ErrorMessage.ErrorType;
 import messages.Message.MessageType;
 
@@ -94,7 +95,10 @@ public class ReceiverDFA extends DFA {
 							return response;
 						}
 						controlMessage.command = 0x02;
-						response = new DFAResponse(message, false, null);
+						
+						ControlMessage responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
+						Message responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);
+						response = new DFAResponse(responseMessage, false, null);
 						return response;
 			default:
 						errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
