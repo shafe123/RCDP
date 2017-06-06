@@ -31,6 +31,6 @@ public class AckMessage extends MessageBody {
 	}
 
 	public static MessageBody fromByteArray(byte[] bdy) {
-		return new ErrorMessage(bdy);
+		return new AckMessage(bdy);
 	}
 }

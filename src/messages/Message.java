@@ -43,6 +43,9 @@ public class Message {
 		case ERROR:
 			this.body = ErrorMessage.fromByteArray(bdy);
 			break;
+		case ACK:
+			this.body = AckMessage.fromByteArray(bdy);
+			break;
 		default:
 			throw new Exception("Could not parse message");
 		}
