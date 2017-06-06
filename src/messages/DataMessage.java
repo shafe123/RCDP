@@ -10,7 +10,7 @@ public class DataMessage extends MessageBody {
 	public byte[] data;
 	
 	public DataMessage(DataType type, byte flag, byte[] data) throws Exception {
-		if (data.length > 127) {
+		if (data.length > 125) {
 			String err = "Size of data is too large to send message.";
 			throw new Exception(err);
 		}
@@ -23,7 +23,7 @@ public class DataMessage extends MessageBody {
 	public DataMessage(byte[] bdy) {
 		this.type = DataType.values()[bdy[0]];
 		this.flag = bdy[1];
-		this.data = Arrays.copyOfRange(bdy, 2, bdy.length-2);
+		this.data = Arrays.copyOfRange(bdy, 2, bdy.length);
 	}
 	
 	@Override
@@ -46,7 +46,7 @@ public class DataMessage extends MessageBody {
 	public boolean equals(Object obj) {
 		if (obj instanceof DataMessage) {
 			DataMessage other = (DataMessage) obj;
-			return (this.flag == other.flag && this.type == other.type && this.data.equals(other.data));
+			return (this.flag == other.flag && this.type == other.type && Arrays.equals(this.data, other.data));
 		}
 		
 		return false;
@@ -55,5 +55,14 @@ public class DataMessage extends MessageBody {
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new DataMessage(bdy);
 	}	
+	
+	@Override
+	public String toString() {
+		String result = 
+				"Data type: " + this.type + System.lineSeparator() +
+				"Flag: " + (int) this.flag + System.lineSeparator() +
+				"Data length: " + this.data.length;
+		return result;
+	}
 }
 //

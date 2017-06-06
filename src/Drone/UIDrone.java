@@ -34,6 +34,9 @@ import java.io.*;
 
 import javax.swing.*;
 
+import DFA.DroneDFA;
+import messages.Message;
+
 /**
  * UI swing setup
  */
@@ -332,7 +335,8 @@ public class UIDrone {
 	}
 
 	/**
-	 * Implementing various message listeners based on the protocol
+	 * Implementing various message listeners based on the protocol,
+	 * including button to turn on and turn off the drone (i.e. server)
 	 */
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -352,7 +356,8 @@ public class UIDrone {
 				password = new String(cs);
 				DroneId = JdroneId.getText();
 				display("DroneID: "+DroneId+ " password:" + password);
-				Thread t = new Thread(new DroneServer(portNumber,password,DroneId,swingControlDemo));
+
+				Thread t = new Thread( new DroneServer(portNumber,password,DroneId,swingControlDemo));
 				t.start();
 
 			} else if (command.equals("TurnOff")) {

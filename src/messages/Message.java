@@ -43,6 +43,9 @@ public class Message {
 		case ERROR:
 			this.body = ErrorMessage.fromByteArray(bdy);
 			break;
+		case ACK:
+			this.body = AckMessage.fromByteArray(bdy);
+			break;
 		default:
 			throw new Exception("Could not parse message");
 		}
@@ -65,6 +68,7 @@ public class Message {
 		return new Message(msg);
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Message) {
 			Message other = (Message) obj;
@@ -72,5 +76,10 @@ public class Message {
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return this.header.toString() + System.lineSeparator() + this.body.toString();
 	}
 }

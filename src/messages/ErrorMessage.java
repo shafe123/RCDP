@@ -3,7 +3,8 @@ package messages;
 public class ErrorMessage extends MessageBody {
 	public enum ErrorType { CANNOT_FIND_DRONE, CONNECTION_ERROR, AUTHENTICATION_ERROR, 
 		INVALID_CONTROL, INVALID_DATA, DRONE_LOW_BATTERY, CONTROLLER_LOW_BATTERY, 
-		WEAK_SIGNAL, LOST_SIGNAL; }
+		WEAK_SIGNAL, LOST_SIGNAL, VERSION_ERROR, INVALID_RANDOM_NUMBER, INVALID_COMMAND, INVALID_MESSAGE, 
+		JSON_PARAMETER_ERROR, INVALID_STATE;}
 	
 	
 	public ErrorType error_code;
@@ -37,5 +38,10 @@ public class ErrorMessage extends MessageBody {
 
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new ErrorMessage(bdy);
+	}
+	
+	@Override
+	public String toString() {
+		return "Error Code: " + this.error_code;
 	}
 }

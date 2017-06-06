@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import DFA.DFAResponse;
+import DFA.ReceiverDFA;
 import messages.Message;
 
 public class readACK implements Runnable {
@@ -11,13 +13,24 @@ public class readACK implements Runnable {
 	public DataInputStream dIn;
 	public UIReceiver UI;
 	public Socket echoSocket;
-
-	public readACK(Socket socket,UIReceiver ui) {
+	public boolean isAuthenticate = false;
+	public String VERSION;
+	public String RandomNum;
+	public String PASSWORD;
+	public ReceiverDFA receiverDFA;
+	
+	public readACK(Socket socket,UIReceiver ui,String password,String version, String randomNum) {
 		UI = ui;
 		echoSocket = socket;
+		PASSWORD = password;
+		VERSION = version;
+		RandomNum = randomNum;
+		receiverDFA = new ReceiverDFA(PASSWORD, VERSION, RandomNum);
 
 	}
-
+/**
+ * use for read ACK
+ */
 	public void run() {
 
 		int length;
@@ -28,19 +41,38 @@ public class readACK implements Runnable {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
 					dIn.readFully(messagebyte, 0, messagebyte.length);
-					// TODO Auto-generated catch block
 					Message msg;
-
 					msg = Message.fromByteArray(messagebyte);
-					testDisplay(msg);
-					UI.commandQueue.offer("Up");
+					UI.display("Received Message Detail: \n" + msg.toString());
+//					testDisplay(msg);
+					// if isAuthenticate, the message is ack or err
+					if (isAuthenticate){
+						
+					} else{
+						// if not isAuthenticate, the msg is drone hello
+						UI.display("Drone Hello Received");
+						DFAResponse receiverResponse = receiverDFA.authenticate(msg);
+						if (receiverResponse.isErrorFlag()){
+							// if error
+							UI.display(receiverResponse.getErrorMessage());
+						} else{
+							// if not error return reponse drone hello
+							UI.display("responseRDroneHello sent");
+							Message responseRDroneHello = receiverResponse.getMessage();
+							UI.commandQueue.offer("RDH");
+
+							UI.messageQueue.offer(responseRDroneHello);
+							isAuthenticate = true;
+						}
+					}
+					
+
 
 				}
 
 			}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			UI.display(e.getMessage());
 		}
 	}
