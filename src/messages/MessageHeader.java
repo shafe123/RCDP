@@ -45,4 +45,14 @@ public class MessageHeader {
 		
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		String result = 
+				"Type: " + this.type.toString() + System.lineSeparator() + 
+				"MessageID: " + this.messageID + System.lineSeparator() + 
+				"Length: " + this.length + System.lineSeparator() +
+				"--------------------";
+		return result;
+	}
 }

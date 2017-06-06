@@ -8,4 +8,6 @@ public abstract class MessageBody {
 	public abstract byte[] toByteArray();
 	
 	public abstract boolean equals(Object obj);
+	
+	public abstract String toString();
 }

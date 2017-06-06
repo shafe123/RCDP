@@ -39,4 +39,9 @@ public class ErrorMessage extends MessageBody {
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new ErrorMessage(bdy);
 	}
+	
+	@Override
+	public String toString() {
+		return "Error Code: " + this.error_code;
+	}
 }
