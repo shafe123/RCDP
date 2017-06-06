@@ -99,5 +99,10 @@ public class MessageTests {
 		Message ackCheck = Message.fromByteArray(ackbyte);
 		assertEquals(this.ackMsg, ackCheck);
 	}
+	
+	@Test
+	public void toStringTest() throws Exception {
+		System.out.println(ctrlMsg.toString());
+	}
 
 }

@@ -33,4 +33,10 @@ public class AckMessage extends MessageBody {
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new AckMessage(bdy);
 	}
+	
+	@Override
+	public String toString() {
+		String result = "ID Ack'd: " + this.MessageID;
+		return result;
+	}
 }

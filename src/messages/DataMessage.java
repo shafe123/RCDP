@@ -55,5 +55,14 @@ public class DataMessage extends MessageBody {
 	public static MessageBody fromByteArray(byte[] bdy) {
 		return new DataMessage(bdy);
 	}	
+	
+	@Override
+	public String toString() {
+		String result = 
+				"Data type: " + this.type + System.lineSeparator() +
+				"Flag: " + (int) this.flag + System.lineSeparator() +
+				"Data length: " + this.data.length;
+		return result;
+	}
 }
 //

@@ -86,4 +86,12 @@ public class ControlMessage extends MessageBody {
 		return new ControlMessage(bdy);
 	}
 	
+	@Override
+	public String toString() {
+		String result = 
+				"Control type: " + this.type + System.lineSeparator() +
+				"Command: " + (int) this.command + System.lineSeparator() +
+				"Params: " + this.params.toString();
+		return result;
+	}
 }
