@@ -1,3 +1,21 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: DroneServer.java
+*
+* Description:
+*
+* Requirements:
+*
+*=================================================================================
+* */
 package Drone;
 
 import java.io.BufferedReader;
@@ -17,6 +35,13 @@ public class DroneServer implements Runnable {
 	private String DRONE_ID;
 	private UIDrone UI;
 
+	/**
+	 *
+	 * @param p_number
+	 * @param passward
+	 * @param drone_id
+	 * @param ui
+	 */
 	public DroneServer(String p_number, String passward, String drone_id, UIDrone ui) {
 		PORT_NUMBER = p_number;
 		PASSWARD = passward;
