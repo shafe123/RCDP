@@ -1,6 +1,6 @@
 package messages;
 
-class MessageHeader {
+public class MessageHeader {
 	//The three types of Messages are "CONTROL", "DATA", AND "ERROR".
 	//The type will be encoded into a 2-bit flag based off of the enumeration.
 	//http://stackoverflow.com/questions/4032327/java-working-with-bits	
