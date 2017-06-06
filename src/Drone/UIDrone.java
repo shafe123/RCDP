@@ -1,4 +1,24 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: DroneServer.java
+*
+* Description:
+*
+* Requirements:
+*
+*=================================================================================
+* */
+
 package Drone;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.net.ServerSocket;
@@ -29,6 +49,10 @@ public class UIDrone {
 		prepareGUI();
 	}
 
+	/**
+	 *
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		swingControlDemo = new UIDrone();
 		swingControlDemo.showEventDemo();
