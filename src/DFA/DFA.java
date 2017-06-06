@@ -13,6 +13,7 @@ abstract class DFA {
 	 * @param message
 	 * @return {@link DFAResponse}
 	 * This method should perform the initial authentication for Client-Server Handshake
+	 * @throws Exception 
 	 */
-	abstract DFAResponse authenticate(Message message);
+	abstract DFAResponse authenticate(Message message) throws Exception;
 }

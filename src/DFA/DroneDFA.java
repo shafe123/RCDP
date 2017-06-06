@@ -2,9 +2,11 @@ package DFA;
 
 import org.json.simple.JSONObject;
 
-import Drone.DroneServer;
 import messages.ControlMessage;
+import messages.ErrorMessage;
+import messages.ErrorMessage.ErrorType;
 import messages.Message;
+import messages.Message.MessageType;
 import messages.MessageBody;
 
 /**
@@ -27,9 +29,11 @@ public class DroneDFA extends DFA {
 
 
 	@Override
-	public DFAResponse authenticate(Message message) {
+	public DFAResponse authenticate(Message message) throws Exception {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
+		Message errorMessage = null;
+		int messageID = message.header.messageID;
 		
 		if(messageBody instanceof ControlMessage){
 			ControlMessage controlMessage = (ControlMessage) messageBody;
@@ -38,29 +42,34 @@ public class DroneDFA extends DFA {
 			switch (command) {
 			case 0x00:
 						if(!params.containsKey("password")){
-							response = new DFAResponse(message, true, "password field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.AUTHENTICATION_ERROR));
+							response = new DFAResponse(errorMessage, true, "password field not present in message params");
 							return response;
 						}
 						//Authenticate Password
 						String receiverPassword = (String) params.get("password");
 						String dronePassword = password;
 						if(Utility.isEmpty(receiverPassword)){
-							response = new DFAResponse(message, true, "Receiver Password is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.AUTHENTICATION_ERROR));
+							response = new DFAResponse(errorMessage, true, "Receiver Password is null or empty");
 							return response;
 						}
 						
 						if(Utility.isEmpty(dronePassword)){
-							response = new DFAResponse(message, true, "Drone Password is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.AUTHENTICATION_ERROR));
+							response = new DFAResponse(errorMessage, true, "Drone Password is null or empty");
 							return response;
 						}
 						
 						if(!receiverPassword.equals(dronePassword)){
-							response = new DFAResponse(message, true, "Incorrect Password");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.AUTHENTICATION_ERROR));
+							response = new DFAResponse(errorMessage, true, "Incorrect Password");
 							return response;
 						}
 						
 						if(!params.containsKey("version")){
-							response = new DFAResponse(message, true, "version field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
+							response = new DFAResponse(errorMessage, true, "version field not present in message params");
 							return response;
 						}
 						
@@ -71,12 +80,14 @@ public class DroneDFA extends DFA {
 						params.put("version", version);
 						
 						if(!params.containsKey("random number A")){//Check if random number from receiver is present
-							response = new DFAResponse(message, true, "random number A field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number A field not present in message params");
 							return response;
 						}
 						
 						if(Utility.isEmpty(String.valueOf(params.get("random number A")))){
-							response = new DFAResponse(message, true, "random number A is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number A is null or empty");
 							return response;
 						}
 						
@@ -88,49 +99,58 @@ public class DroneDFA extends DFA {
 			case 0x02:
 						//Verify Version
 						if(!params.containsKey("version")){
-							response = new DFAResponse(message, true, "version field not present in message params");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
+							response = new DFAResponse(errorMessage, true, "version field not present in message params");
 							return response;
 						}
 						
 						version = String.valueOf(params.get("version"));
 						if(Utility.isEmpty(version)){
-							response = new DFAResponse(message, true, "Version is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
+							response = new DFAResponse(errorMessage, true, "Version is null or empty");
 							return response;
 						}
 						
 					    if(!version.equals(version)){
-					    	response = new DFAResponse(message, true, "Version is invalid");
+					    	errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
+					    	response = new DFAResponse(errorMessage, true, "Version is invalid");
 							return response;
 					    }
 					    
 					  //Verify random number B sent by drone
 					    if(!params.containsKey("random number B")){//Check if random number from receiver is present
-							response = new DFAResponse(message, true, "random number B field not present in message params");
+					    	errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number B field not present in message params");
 							return response;
 						}
 					    
 						String randomNumberB = String.valueOf(params.get("random number B"));
 						if(Utility.isEmpty(randomNumberB)){
-							response = new DFAResponse(message, true, "random number B is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number B is null or empty");
 							return response;
 						}
 						
 						if(Utility.isEmpty(randomNumber)){
-							response = new DFAResponse(message, true, "random number for drone is null or empty");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number for drone is null or empty");
 							return response;
 						}
 						
 						if(!randomNumberB.equals(randomNumber)){
-							response = new DFAResponse(message, true, "random number B sent by drone is invalid");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
+							response = new DFAResponse(errorMessage, true, "random number B sent by drone is invalid");
 							return response;
 						}
 						response = new DFAResponse(message, false, null);
 						return response;
 			
 			default:
-						return new DFAResponse(message, true, "Invalid Command Byte");
+						errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
+						return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 			}
 		}
-		return new DFAResponse(message, true, "Message is not of type Control Message");
+		errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));
+		return new DFAResponse(errorMessage, true, "Message is not of type Control Message");
 	}
 }

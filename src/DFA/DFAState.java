@@ -3,7 +3,10 @@ package DFA;
 import org.json.simple.JSONObject;
 
 import messages.ControlMessage;
+import messages.ErrorMessage;
 import messages.ControlMessage.ControlType;
+import messages.ErrorMessage.ErrorType;
+import messages.Message.MessageType;
 import messages.Message;
 import messages.MessageBody;
 
@@ -15,9 +18,12 @@ import messages.MessageBody;
 public class DFAState {
 	static DFAResponse nextState;
 
-	public static DFAResponse getNextState(Message message, ControlType currentState) {
+	public static DFAResponse getNextState(Message message, ControlType currentState) throws Exception {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
+		Message errorMessage = null;
+		int messageID = message.header.messageID;
+		
 		if(messageBody instanceof ControlMessage){
 			ControlMessage controlMessage = (ControlMessage) messageBody;
 			byte command = controlMessage.command;
@@ -34,7 +40,8 @@ public class DFAState {
 												controlMessage.type = ControlType.FLYING;
 												break;
 									default:
-												return new DFAResponse(message, true, "Invalid Command Byte");
+												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
+												return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 									}
 								break;
 				case FLYING:	
@@ -52,7 +59,8 @@ public class DFAState {
 												controlMessage.type = ControlType.PREFLIGHT;
 												break;
 									default:
-												return new DFAResponse(message, true, "Invalid Command Byte");
+												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
+												return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 								}
 								break;
 				case AUTONOMOUS:
@@ -67,7 +75,8 @@ public class DFAState {
 												controlMessage.type = ControlType.PREFLIGHT;
 												break;
 									default:
-												return new DFAResponse(message, true, "Invalid Command Byte");
+												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
+												return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 								}
 								break;
 				case BEACON:	
@@ -75,14 +84,16 @@ public class DFAState {
 								case 0x00:
 											JSONObject params = controlMessage.params;
 											if(!params.containsKey("to_mode")){
-												response = new DFAResponse(message, true, "to_mode field is "
+												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.JSON_PARAMETER_ERROR));
+												response = new DFAResponse(errorMessage, true, "to_mode field is "
 																						+ "not present in message params");
 												return response;
 											}
 											
 											String to_mode = String.valueOf(params.get("to_mode"));
 											if(Utility.isEmpty(to_mode)){
-												response = new DFAResponse(message, true, "to_mode field in message "
+												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.JSON_PARAMETER_ERROR));
+												response = new DFAResponse(errorMessage, true, "to_mode field in message "
 																						+ "params is null or empty");
 												return response;
 											}
@@ -94,7 +105,8 @@ public class DFAState {
 												controlMessage.type = ControlType.PREFLIGHT;
 											}
 											else{
-												response = new DFAResponse(message, true, "value of to_mode field in message "
+												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.JSON_PARAMETER_ERROR));
+												response = new DFAResponse(errorMessage, true, "value of to_mode field in message "
 																						+ "params is invalid");
 												return response;
 											}
@@ -103,15 +115,18 @@ public class DFAState {
 											controlMessage.type = ControlType.BEACON;
 											break;
 								default:
-											return new DFAResponse(message, true, "Invalid Command Byte");
+											errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_COMMAND));
+											return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 							}
 							break;
 				default:
-							return new DFAResponse(message, true, "Current State is Invalid");
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_STATE));
+							return new DFAResponse(errorMessage, true, "Current State is Invalid");
 			}
 		}
 		else{
-			return new DFAResponse(message, true, "Invalid messageBody type");
+			errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));
+			return new DFAResponse(errorMessage, true, "Invalid messageBody type");
 		}
 		nextState = new DFAResponse(message, false, null);
 		return nextState;
