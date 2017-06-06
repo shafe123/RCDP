@@ -13,19 +13,19 @@ import messages.MessageBody;
  * This class provides functionality related to Drone
  */
 public class DroneDFA extends DFA {
-	private DroneServer drone;
+	private String password;
+	private String version;
+	private String randomNumber;
+	private String droneID;
 	
-	public DroneServer getDrone() {
-		return drone;
+	public DroneDFA(String password, String version, String randomNumber, String droneID) {
+		this.password = password;
+		this.version = version;
+		this.randomNumber = randomNumber;
+		this.droneID = droneID;
 	}
-	public void setDrone(DroneServer drone) {
-		this.drone = drone;
-	}
-	
-	public DroneDFA(DroneServer drone) {
-		this.drone = drone;
-	}
-	
+
+
 	@Override
 	DFAResponse authenticate(Message message) {
 		DFAResponse response = null;
@@ -43,7 +43,7 @@ public class DroneDFA extends DFA {
 						}
 						//Authenticate Password
 						String receiverPassword = (String) params.get("password");
-						String dronePassword = drone.PASSWORD;
+						String dronePassword = password;
 						if(Utility.isEmpty(receiverPassword)){
 							response = new DFAResponse(message, true, "Receiver Password is null or empty");
 							return response;
@@ -66,7 +66,7 @@ public class DroneDFA extends DFA {
 						
 						//set minimum of receiverVersion and droneVersion as final version.
 						double receiverVersion = Double.parseDouble(String.valueOf(params.get("version")));
-						double droneVersion = Double.parseDouble(drone.VERSION);
+						double droneVersion = Double.parseDouble(version);
 						String version = String.valueOf(receiverVersion < droneVersion ? receiverVersion : droneVersion);
 						params.put("version", version);
 						
@@ -98,7 +98,7 @@ public class DroneDFA extends DFA {
 							return response;
 						}
 						
-					    if(!version.equals(drone.VERSION)){
+					    if(!version.equals(version)){
 					    	response = new DFAResponse(message, true, "Version is invalid");
 							return response;
 					    }
@@ -115,7 +115,6 @@ public class DroneDFA extends DFA {
 							return response;
 						}
 						
-						String randomNumber = drone.getRandomNum();
 						if(Utility.isEmpty(randomNumber)){
 							response = new DFAResponse(message, true, "random number for drone is null or empty");
 							return response;

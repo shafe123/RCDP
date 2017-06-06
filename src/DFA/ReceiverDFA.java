@@ -14,17 +14,14 @@ import messages.MessageBody;
  *
  */
 public class ReceiverDFA extends DFA {
-	private ReceiverClient receiver;
+	private String password;
+	private String version;
+	private String randomNumber;
 	
-	public ReceiverDFA(ReceiverClient receiver) {
-		this.receiver = receiver;
-	}
-	
-	public ReceiverClient getReceiver() {
-		return receiver;
-	}
-	public void setReceiver(ReceiverClient receiver) {
-		this.receiver = receiver;
+	public ReceiverDFA(String password, String version, String randomNumber) {
+		this.password = password;
+		this.version = version;
+		this.randomNumber = randomNumber;
 	}
 	
 	/**
@@ -48,7 +45,7 @@ public class ReceiverDFA extends DFA {
 						
 						//set minimum of receiverVersion and droneVersion as final version.
 						double receiverVersion = Double.parseDouble(String.valueOf(params.get("version")));
-						double droneVersion = Double.parseDouble(receiver.VERSION);
+						double droneVersion = Double.parseDouble(version);
 						String version = String.valueOf(receiverVersion < droneVersion ? receiverVersion : droneVersion);
 						params.put("version", version);
 						
@@ -64,7 +61,6 @@ public class ReceiverDFA extends DFA {
 							return response;
 						}
 						
-						String randomNumber = receiver.getRandomNum();
 						if(Utility.isEmpty(randomNumber)){
 							response = new DFAResponse(message, true, "random number for receiver is null or empty");
 							return response;

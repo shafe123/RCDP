@@ -25,13 +25,13 @@ public class TestDFA {
 		Message message = new Message(MessageType.CONTROL, 3, controlMessage);
 		
 		DroneServer droneServer = new DroneServer("8080", "pass", "1234", new UIDrone());
-		DroneDFA droneDFA = new DroneDFA(droneServer);
+		DroneDFA droneDFA = new DroneDFA("password", "1.2", "1.23", "2.36");
 		DFAResponse droneResponse = droneDFA.authenticate(message);
 		
 		//Steps to be followed for authenticating a drone hello message
 		json.put("random number B", "2.3456");
 		ReceiverClient receiverClient = new ReceiverClient(new Socket(), new UIReceiver(),"pass");
-		ReceiverDFA receiverDFA = new ReceiverDFA(receiverClient);
+		ReceiverDFA receiverDFA = new ReceiverDFA("password", "1.2", "1.23");
 		DFAResponse receiverResponse = receiverDFA.authenticate(message);
 		
 		//Steps to be followed for getting next DFA state
