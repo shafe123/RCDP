@@ -6,32 +6,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.json.simple.JSONObject;
+
+import messages.AckMessage;
+import messages.ControlMessage;
+import messages.ErrorMessage;
+import messages.Message;
+import messages.ControlMessage.ControlType;
+import messages.ErrorMessage.ErrorType;
+import messages.Message.MessageType;
+
 public class SystemDemo {
 
    public static void main(String[] args) throws Exception {
 
+	   
+	   
 
-String str = "This is a String ~ GoGoGo";
-
-		final BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
-		Thread running = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					try {
-						String data = queue.take();
-						// handle the data
-					} catch (InterruptedException e) {
-						System.err.println("Error occurred:" + e);
-					}
-				}
-			}
-		});
-
-		running.start();
-		// Send data to the running thread
-		for (int i = 0; i < 10; i++) {
-			queue.offer("data " + i);
-		}       
+		AckMessage m5bdy = new AckMessage(3);
+		Message m5 = new Message(MessageType.ACK, 5, m5bdy);
+		System.out.println(Message.toByteArray(m5));
+		System.out.println(Message.fromByteArray(Message.toByteArray(m5)));
+		
    }
 } 

@@ -41,12 +41,12 @@ public class ReceiverClient implements Runnable {
 	public String RandomNum;
 	public ReceiverDFA receiverDFA;
 
-	public ReceiverClient(Socket socket, UIReceiver ui, String password) {
+	public ReceiverClient(Socket socket, UIReceiver ui, String password,String version, String randomNum) {
 		echoSocket = socket;
 		UI = ui;
 		PASSWORD = password;
-		VERSION = "1.0";
-		RandomNum = "123";
+		VERSION = version;
+		RandomNum = randomNum;
 		receiverDFA = new ReceiverDFA(PASSWORD, VERSION, RandomNum);
 	}
 
@@ -115,7 +115,24 @@ public class ReceiverClient implements Runnable {
 
 				switch (command) {
 				case "TurnOn":
+					MSGType = MessageType.CONTROL;
+					commandbyte = 0x00;
+					json = new JSONObject();
+					json.put("version", VERSION);
+					json.put("random number A", RandomNum);
+					json.put("password", PASSWORD);
 
+					sendMSG(MSGType, commandbyte, json, dOut);
+					
+					break;
+				case "RDH":
+					try {
+						Message RDH = UI.messageQueue.take();
+						sendMSG(RDH, dOut);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				case "Up":
 					if (status == ControlType.FLYING) {
@@ -307,6 +324,8 @@ public class ReceiverClient implements Runnable {
 		}
 	}
 
+
+
 	public void testDisplay(Message msg) {
 		for (byte theByte : Message.toByteArray(msg)) {
 			UI.display(Integer.toHexString(theByte));
@@ -327,5 +346,11 @@ public class ReceiverClient implements Runnable {
 			UI.display(e.getMessage());
 		}
 		UI.display(command + " command sent");
+	}
+	private void sendMSG(Message take, DataOutputStream dOut) throws IOException {
+		// TODO Auto-generated method stub
+		dOut.writeInt(Message.toByteArray(take).length);
+		dOut.write(Message.toByteArray(take));
+		
 	}
 }
