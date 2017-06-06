@@ -11,8 +11,15 @@
 * File name: DroneServer.java
 *
 * Description:
+* This file contains the drone user interface functionality and displays the
+* interaction between the drone the the receiver. The this behavior
+* is simulated as the interface provides various buttons the represent
+* the operations of the drone and the receiver. The messages will be visible
+* in a scrolling text box showing the user the current message execution
+* and provide any feed back as neccessary.
 *
-* Requirements:
+* Requirements (Further details can be found in the file below):
+* - UI
 *
 *=================================================================================
 * */
@@ -27,6 +34,9 @@ import java.io.*;
 
 import javax.swing.*;
 
+/**
+ * UI swing setup
+ */
 public class UIDrone {
 	private JFrame mainFrame;
 	private JTextArea statusLabel;
@@ -36,28 +46,28 @@ public class UIDrone {
 	private JScrollPane sp;
 	private static UIDrone swingControlDemo;
 	private JPasswordField Jpassword;
-	private JTextField JdroneId; 
+	private JTextField JdroneId;
 
-
+	/**
+	 * Default server port, credentials, and variables
+	 */
 	private String portNumber = "8080";
 	private String password;
 	private String DroneId;
 	private Integer messageID = 0;
-	
 
 	public UIDrone() {
 		prepareGUI();
 	}
 
-	/**
-	 *
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		swingControlDemo = new UIDrone();
 		swingControlDemo.showEventDemo();
 	}
 
+	/**
+	 * Preparing GUI
+	 */
 	private void prepareGUI() {
 		mainFrame = new JFrame("RCDP drone");
 		mainFrame.setSize(1000, 600);
@@ -81,6 +91,9 @@ public class UIDrone {
 
 	}
 
+	/**
+	 * Displaying event demo
+	 */
 	private void showEventDemo() {
 
 		JLabel headerLable = new JLabel("Remote control Drone Protocol: Drone", JLabel.CENTER);
@@ -306,17 +319,21 @@ public class UIDrone {
 
 		mainFrame.setVisible(true);
 	}
-	
-	
-	// Anything above this line are for UI
-	
-	// display on UI
+	// end of UI
+
+	/**
+	 * Displays the method for init UI
+	 * @param s string takes in a control command
+	 */
 	public void display(String s) {
 		LogStringCount++;
 		log.append(LogStringCount + ":" + s + "\n");
 		statusLabel.setText(log.toString());
 	}
 
+	/**
+	 * Implementing various message listeners based on the protocol
+	 */
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
