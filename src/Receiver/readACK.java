@@ -17,7 +17,9 @@ public class readACK implements Runnable {
 		echoSocket = socket;
 
 	}
-
+/**
+ * use for read ACK
+ */
 	public void run() {
 
 		int length;
@@ -28,19 +30,16 @@ public class readACK implements Runnable {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
 					dIn.readFully(messagebyte, 0, messagebyte.length);
-					// TODO Auto-generated catch block
 					Message msg;
 
 					msg = Message.fromByteArray(messagebyte);
 					testDisplay(msg);
-					UI.commandQueue.offer("Up");
 
 				}
 
 			}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			UI.display(e.getMessage());
 		}
 	}

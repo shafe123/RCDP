@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.jws.Oneway;
 import javax.net.ssl.HostnameVerifier;
 import javax.swing.*;
 
@@ -32,6 +33,7 @@ public class UIReceiver {
 	public String HOSTNAME = "127.0.0.1";
 	public static UIReceiver swingControlDemo;
 	public Socket echoSocket;
+	private boolean powerOn = false;
 
 	private ReceiverClient receiverClient;
 	public readACK readACK;
@@ -45,7 +47,9 @@ public class UIReceiver {
 		swingControlDemo = new UIReceiver();
 		swingControlDemo.showEventDemo();
 	}
-
+/**
+ * UI code
+ */
 	private void prepareGUI() {
 		mainFrame = new JFrame("RCDP receiver");
 		mainFrame.setSize(600, 600);
@@ -78,8 +82,8 @@ public class UIReceiver {
 		JButton turnOffButton = new JButton("TurnOff");
 		JButton upButton = new JButton("Up");
 		JButton downButton = new JButton("Down");
-		JButton rollLeftButton = new JButton("RollLeft");
-		JButton rollRightButton = new JButton("RollRight");
+		JButton rollLeftButton = new JButton("TurnLeft");
+		JButton rollRightButton = new JButton("TurnRight");
 		JButton leftButton = new JButton("<");
 		JButton rightButton = new JButton(">");
 		JButton forwardButton = new JButton("^");
@@ -192,15 +196,15 @@ public class UIReceiver {
 		gbl.setConstraints(pw, gbs);
 		
 		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 1;
+		gbs.gridwidth = 2;
 		gbs.gridheight = 1;
 		gbs.insets = new Insets(1, 0, 1, 0);
 		gbs.weightx = 1;
 		gbs.weighty = 1;
 		gbs.gridx = 4;
 		gbs.gridy = 1;
-		gbs.ipadx = 30;
-		gbs.ipady = 20;
+		gbs.ipadx = 100;
+		gbs.ipady = 10;
 		gbl.setConstraints(passwordField, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
@@ -213,7 +217,7 @@ public class UIReceiver {
 		gbs.gridy = 2;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(forwardButton, gbs);
+		gbl.setConstraints(upButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -249,7 +253,7 @@ public class UIReceiver {
 		gbs.gridy = 2;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(upButton, gbs);
+		gbl.setConstraints(forwardButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -261,7 +265,7 @@ public class UIReceiver {
 		gbs.gridy = 3;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(leftButton, gbs);
+		gbl.setConstraints(rollLeftButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -273,7 +277,7 @@ public class UIReceiver {
 		gbs.gridy = 3;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(rightButton, gbs);
+		gbl.setConstraints(rollRightButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -309,7 +313,7 @@ public class UIReceiver {
 		gbs.gridy = 3;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(rollLeftButton, gbs);
+		gbl.setConstraints(leftButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -321,7 +325,7 @@ public class UIReceiver {
 		gbs.gridy = 3;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(rollRightButton, gbs);
+		gbl.setConstraints(rightButton, gbs);	
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -333,7 +337,7 @@ public class UIReceiver {
 		gbs.gridy = 4;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(backwardButton, gbs);
+		gbl.setConstraints(downButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -345,8 +349,8 @@ public class UIReceiver {
 		gbs.gridy = 4;
 		gbs.ipadx = 50;
 		gbs.ipady = 20;
-		gbl.setConstraints(downButton, gbs);
-
+		gbl.setConstraints(backwardButton, gbs);
+		
 		mainFrame.setVisible(true);
 	}
 
@@ -363,44 +367,45 @@ public class UIReceiver {
 		
 	}
 
+	/**
+	 * 
+	 * after click the button, add command to a Queue, wait for client to read and send
+	 *
+	 */
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			String TurnOn = "TurnOn, port number: " + PORTNUMBER;
-			String TurnOff = "TurnOff";
-			String Up = "Up commend sent";
-			String Down = "Down commend sent";
-			String Left = "< commend sent";
-			String Right = "> commend sent";
-			String Forward = "^ commend sent";
-			String Backward = "v commend sent";
-			String Land = "Land commend sent";
-			String Auto = "Auto commend sent";
-			String Propeller = "Propeller commend sent";
-			String Beacon = "Beacon commend sent";
 
 			switch (command) {
 			case "TurnOn":
 				display(TurnOn);
-				char[] cs = passwordField.getPassword();
-				String PASSWORD = new String(cs);
-				try {
-					echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
-					receiverClient = new ReceiverClient(echoSocket, swingControlDemo);
-					readACK = new readACK(echoSocket, swingControlDemo);
-					 
-//					while(commandQueue.poll() != null){};
-				
-					Thread t = new Thread(receiverClient);
-					t.start();
-					Thread t1 = new Thread(readACK);
-					t1.start();
+				if (powerOn){
+					display("Already turned on");
+				}else{
+						while (commandQueue.poll() != null){}
+		
+					char[] cs = passwordField.getPassword();
+					String PASSWORD = new String(cs);
+					try {
+						echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
+						receiverClient = new ReceiverClient(echoSocket, swingControlDemo,PASSWORD);
+						readACK = new readACK(echoSocket, swingControlDemo);
+						 				
+						Thread t = new Thread(receiverClient);
+						t.start();
+						Thread t1 = new Thread(readACK);
+						t1.start();
+						display("connected");
+						powerOn = true;
+						
+						commandQueue.offer("TurnOn");
+					} catch (NumberFormatException | IOException e1) {
+						display(e1.getMessage());
+					}
 					
-					commandQueue.offer("TurnOn");
-				} catch (NumberFormatException | IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
+
 								
 				break;
 			case "TurnOff":

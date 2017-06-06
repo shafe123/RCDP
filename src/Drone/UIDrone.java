@@ -293,6 +293,12 @@ public class UIDrone {
 		statusLabel.setText(log.toString());
 	}
 
+	/**
+	 * 
+	 * click turn on to turn on the server, turn off to turn off server
+	 *
+	 */
+
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();

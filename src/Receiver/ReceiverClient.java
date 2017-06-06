@@ -21,11 +21,11 @@ import messages.Message;
 public class ReceiverClient implements Runnable {
 
 	private String HOSTNAME;
+
 	private String PORTNUMBER;
-	private String PASSWORD;
+	public String PASSWORD;
 	private UIReceiver UI;
 	public String command;
-	private String STATE;
 	public Message MSG;
 	public String msgID = "0";
 	private Integer droneID = 0;
@@ -36,36 +36,77 @@ public class ReceiverClient implements Runnable {
 	public ControlMessage controlMessage;
 	public Message msg;
 	public Socket echoSocket;
+	public String VERSION;
+	public String RandomNum;
 
-	public ReceiverClient(Socket socket, UIReceiver ui) {
+	public ReceiverClient(Socket socket, UIReceiver ui, String password) {
 		echoSocket = socket;
 		UI = ui;
+		PASSWORD = password;
+		VERSION = "1.0";
+		RandomNum = "123";
 	}
 
+	public String getPASSWORD() {
+		return PASSWORD;
+	}
+
+	public void setPASSWORD(String pASSWORD) {
+		PASSWORD = pASSWORD;
+	}
+
+	public String getMsgID() {
+		return msgID;
+	}
+
+	public void setMsgID(String msgID) {
+		this.msgID = msgID;
+	}
+
+	public Integer getDroneID() {
+		return droneID;
+	}
+
+	public void setDroneID(Integer droneID) {
+		this.droneID = droneID;
+	}
+
+	public String getVERSION() {
+		return VERSION;
+	}
+
+	public void setVERSION(String vERSION) {
+		VERSION = vERSION;
+	}
+
+	public String getRandomNum() {
+		return RandomNum;
+	}
+
+	public void setRandomNum(String randomNum) {
+		RandomNum = randomNum;
+	}
+
+	/**
+	 * client socket use for send command
+	 */
 	public void run() {
 		MessageType MSGType;
 		byte commandbyte;
 		JSONObject json;
 
-		try (
-				// PrintWriter out = new
-				// PrintWriter(echoSocket.getOutputStream(),
-				// true);
-				// BufferedReader in = new BufferedReader(new
-				// InputStreamReader(echoSocket.getInputStream()));
-				DataOutputStream dOut = new DataOutputStream(echoSocket.getOutputStream());
-//				DataInputStream dIn = new DataInputStream(echoSocket.getInputStream());
+		try (DataOutputStream dOut = new DataOutputStream(echoSocket.getOutputStream());
 
 		) {
 
 			while (true) {
 
 				try {
-					while((command = UI.commandQueue.take()) == null){
-						
-					};
+					while ((command = UI.commandQueue.take()) == null) {
+
+					}
+					;
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					UI.display(e.getMessage());
 				}
 
@@ -73,25 +114,24 @@ public class ReceiverClient implements Runnable {
 				case "TurnOn":
 
 					break;
-				// case "Up":
-				// MSGType = MessageType.CONTROL;
-				// commandbyte = 0x00;
-				// json = new JSONObject();
-				// json.put("throttle", "0");
-				//
-				// sendMSG(MSGType, commandbyte, json, dOut);
-
-				// break;
 				case "Up":
-					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
-					json = new JSONObject();
-					json.put("drone_id", droneID);
-					json.put("throttle", "0");
-					json.put("attitude", "pitch");
+					if (status == ControlType.FLYING) {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x01;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("throttle", "0");
+						json.put("attitude", "pitch");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+						sendMSG(MSGType, commandbyte, json, dOut);
+					} else {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x02;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
 
+						sendMSG(MSGType, commandbyte, json, dOut);
+					}
 					break;
 				case "Down":
 					MSGType = MessageType.CONTROL;
@@ -166,13 +206,23 @@ public class ReceiverClient implements Runnable {
 					sendMSG(MSGType, commandbyte, json, dOut);
 					break;
 				case "Land":
-					MSGType = MessageType.CONTROL;
-					commandbyte = 0x03;
-					json = new JSONObject();
-					json.put("drone_id", droneID);
-					json.put("landing_location", "123,123");
+					if (status == ControlType.FLYING) {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x03;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("landing_location", "123,123");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+						sendMSG(MSGType, commandbyte, json, dOut);
+					} else {
+						MSGType = MessageType.CONTROL;
+						commandbyte = 0x02;
+						json = new JSONObject();
+						json.put("drone_id", droneID);
+						json.put("landing_location", "123,123");
+
+						sendMSG(MSGType, commandbyte, json, dOut);
+					}
 					break;
 				case "Auto":
 					if (automode) {
@@ -210,7 +260,7 @@ public class ReceiverClient implements Runnable {
 						sendMSG(MSGType, commandbyte, json, dOut);
 					} else {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x02;
+						commandbyte = 0x01;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("propeller", "on");
@@ -245,9 +295,7 @@ public class ReceiverClient implements Runnable {
 				default:
 					break;
 				}
-				
-				
-				
+
 			}
 		} catch (UnknownHostException e) {
 			UI.display("Don't know about host " + HOSTNAME);
@@ -262,31 +310,17 @@ public class ReceiverClient implements Runnable {
 		}
 	}
 
-	private void readACK(DataInputStream dIn) throws Exception {
-		// TODO Auto-generated method stub
-		int length;
-		while ((length = dIn.readInt()) != 0) {
-			byte[] messagebyte = new byte[length];
-			dIn.readFully(messagebyte, 0, messagebyte.length); // read the
-																// message
-			Message ACK;
-			ACK = Message.fromByteArray(messagebyte);
-
-			testDisplay(ACK);
-
-		}
-	}
+	/**
+	 * method send command
+	 */
 
 	private void sendMSG(MessageType mSGType, byte commandbyte, JSONObject json, DataOutputStream dOut) {
-		// TODO Auto-generated method stub
 		try {
 			ControlMessage controlMessage = new ControlMessage(status, commandbyte, json);
 			Message mup = new Message(mSGType, 3, controlMessage);
-			// UI.display(mup.toString());
 			dOut.writeInt(Message.toByteArray(mup).length);
 			dOut.write(Message.toByteArray(mup));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			UI.display(e.getMessage());
 		}
 		UI.display(command + " command sent");

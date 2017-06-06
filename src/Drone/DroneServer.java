@@ -12,41 +12,80 @@ import java.net.Socket;
 import messages.Message;
 
 public class DroneServer implements Runnable {
-	private String PORT_NUMBER;
-	private String PASSWARD;
-	private String DRONE_ID;
-	private UIDrone UI;
+	public String PORT_NUMBER;
+	public String PASSWORD;
+	public String DRONE_ID;
+	public UIDrone UI;
+	public String VERSION;
+	public String RandomNum;
 
 	public DroneServer(String p_number, String passward, String drone_id, UIDrone ui) {
 		PORT_NUMBER = p_number;
-		PASSWARD = passward;
+		PASSWORD = passward;
 		DRONE_ID = drone_id;
 		UI = ui;
+		VERSION = "1.1";
+		RandomNum = "234";
 
 	}
+	
+	public String getPASSWORD() {
+		return PASSWORD;
+	}
+
+	public void setPASSWORD(String pASSWARD) {
+		PASSWORD = pASSWARD;
+	}
+
+	public String getDRONE_ID() {
+		return DRONE_ID;
+	}
+
+	public void setDRONE_ID(String dRONE_ID) {
+		DRONE_ID = dRONE_ID;
+	}
+
+	public String getVERSION() {
+		return VERSION;
+	}
+
+	public void setVERSION(String vERSION) {
+		VERSION = vERSION;
+	}
+
+	public String getRandomNum() {
+		return RandomNum;
+	}
+
+	public void setRandomNum(String randomNum) {
+		RandomNum = randomNum;
+	}
+
+	/**
+	 * read command and call DFA change status and return ACK
+	 */
 
 	public void run() {
 
 		try (ServerSocket serverSocket = new ServerSocket(Integer.parseInt(PORT_NUMBER));
 				Socket clientSocket = serverSocket.accept();
-				// PrintWriter out = new
-				// PrintWriter(clientSocket.getOutputStream(), true);
-				// BufferedReader in = new BufferedReader(new
-				// InputStreamReader(clientSocket.getInputStream()));
+
 				DataOutputStream dOut = new DataOutputStream(clientSocket.getOutputStream());
 				DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());) {
 			int length;
 			while ((length = dIn.readInt()) != 0) {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
-					dIn.readFully(messagebyte, 0, messagebyte.length); // read the
-																	// message
+					dIn.readFully(messagebyte, 0, messagebyte.length); // read the message 
 					Message msg;
+					
 					try {
 						msg = Message.fromByteArray(messagebyte);
+						displayMsg(msg);					
 						testDisplay(msg);
 						dOut.writeInt(Message.toByteArray(msg).length);
 						dOut.write(Message.toByteArray(msg));
+						
 						UI.display("ack sent");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -55,42 +94,7 @@ public class DroneServer implements Runnable {
 
 				}
 
-				// UI.display("Received Message from client: " + inputLine);
 
-				// Send back ACK base on received message
-				// switch (inputLine){
-				// case "ReceiverHello":
-				// UI.display("DroneHello sent");
-				// break;
-				// case "RollLeft":
-				// break;
-				// case "RollRight":
-				// break;
-				// case "UP":
-				// UI.display("ACK Up sent");
-				// break;
-				// case "Down":
-				// UI.display("ACK Down sent");
-				// break;
-				// case "Left":
-				// break;
-				// case "Right":
-				// break;
-				// case "Forward":
-				// break;
-				// case "Backward":
-				// break;
-				// case "Land":
-				// break;
-				// case "Auto":
-				// break;
-				// case "Propeller":
-				// break;
-				// case "Beacon":
-				// break;
-				// default:
-				// break;
-				// }
 
 			}
 		} catch (IOException e) {
@@ -99,6 +103,10 @@ public class DroneServer implements Runnable {
 			UI.display(e.getMessage());
 		}
 
+	}
+
+	private void displayMsg(Message msg) {
+		UI.display(msg.toString());
 	}
 
 	public void testDisplay(Message msg) {

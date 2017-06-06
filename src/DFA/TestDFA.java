@@ -30,7 +30,7 @@ public class TestDFA {
 		
 		//Steps to be followed for authenticating a drone hello message
 		json.put("random number B", "2.3456");
-		ReceiverClient receiverClient = new ReceiverClient(new Socket(), new UIReceiver());
+		ReceiverClient receiverClient = new ReceiverClient(new Socket(), new UIReceiver(),"pass");
 		ReceiverDFA receiverDFA = new ReceiverDFA(receiverClient);
 		DFAResponse receiverResponse = receiverDFA.authenticate(message);
 		
