@@ -13,6 +13,7 @@ import java.util.ResourceBundle.Control;
 import org.json.simple.JSONObject;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
+import DFA.ReceiverDFA;
 import messages.ControlMessage;
 import messages.ControlMessage.ControlType;
 import messages.Message.MessageType;
@@ -38,6 +39,7 @@ public class ReceiverClient implements Runnable {
 	public Socket echoSocket;
 	public String VERSION;
 	public String RandomNum;
+	public ReceiverDFA receiverDFA;
 
 	public ReceiverClient(Socket socket, UIReceiver ui, String password) {
 		echoSocket = socket;
@@ -45,6 +47,7 @@ public class ReceiverClient implements Runnable {
 		PASSWORD = password;
 		VERSION = "1.0";
 		RandomNum = "123";
+		receiverDFA = new ReceiverDFA(PASSWORD, VERSION, RandomNum);
 	}
 
 	public String getPASSWORD() {

@@ -7,6 +7,8 @@ import java.io.*;
 
 import javax.swing.*;
 
+import DFA.DroneDFA;
+
 public class UIDrone {
 	private JFrame mainFrame;
 	private JTextArea statusLabel;
@@ -317,7 +319,9 @@ public class UIDrone {
 				password = new String(cs);
 				DroneId = JdroneId.getText();
 				display("DroneID: "+DroneId+ " password:" + password);
-				Thread t = new Thread(new DroneServer(portNumber,password,DroneId,swingControlDemo));
+				DroneServer droneServer = new DroneServer(portNumber,password,DroneId,swingControlDemo);
+				DroneDFA droneDFA = new DroneDFA(droneServer);
+				Thread t = new Thread(droneServer);
 				t.start();
 
 			} else if (command.equals("TurnOff")) {

@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import DFA.DroneDFA;
 import messages.Message;
 
 public class DroneServer implements Runnable {
@@ -18,6 +19,8 @@ public class DroneServer implements Runnable {
 	public UIDrone UI;
 	public String VERSION;
 	public String RandomNum;
+	public DroneDFA droneDFA;
+
 
 	public DroneServer(String p_number, String passward, String drone_id, UIDrone ui) {
 		PORT_NUMBER = p_number;
@@ -26,6 +29,7 @@ public class DroneServer implements Runnable {
 		UI = ui;
 		VERSION = "1.1";
 		RandomNum = "234";
+		droneDFA = new DroneDFA(PASSWORD,VERSION,RandomNum,DRONE_ID);
 
 	}
 	
@@ -81,8 +85,8 @@ public class DroneServer implements Runnable {
 					
 					try {
 						msg = Message.fromByteArray(messagebyte);
-						displayMsg(msg);					
-						testDisplay(msg);
+//						testDisplay(msg);
+						
 						dOut.writeInt(Message.toByteArray(msg).length);
 						dOut.write(Message.toByteArray(msg));
 						
@@ -106,7 +110,6 @@ public class DroneServer implements Runnable {
 	}
 
 	private void displayMsg(Message msg) {
-		UI.display(msg.toString());
 	}
 
 	public void testDisplay(Message msg) {
