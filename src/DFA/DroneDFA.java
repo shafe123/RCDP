@@ -27,7 +27,7 @@ public class DroneDFA extends DFA {
 
 
 	@Override
-	DFAResponse authenticate(Message message) {
+	public DFAResponse authenticate(Message message) {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
 		

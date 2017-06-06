@@ -28,7 +28,7 @@ public class ReceiverDFA extends DFA {
 	 * This method is used by Receiver initially to authenticate the Hello Handshake Message from Drone.
 	 */
 	@Override
-	DFAResponse authenticate(Message message) {
+	public DFAResponse authenticate(Message message) {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
 		
