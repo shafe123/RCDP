@@ -8,7 +8,7 @@
 * - Brent Varga
 * - Xiaxin Xin
 * --------------------------------------------------------------------------------
-* File name: DroneServer.java
+* File name: UIDrone.java
 *
 * Description:
 * This file contains the drone user interface functionality and displays the
@@ -16,9 +16,9 @@
 * is simulated as the interface provides various buttons the represent
 * the operations of the drone and the receiver. The messages will be visible
 * in a scrolling text box showing the user the current message execution
-* and provide any feed back as neccessary.
+* and provide any feed back as necessary.
 *
-* Requirements (Further details can be found in the file below):
+* Requirements (Additional details can be found in the file below):
 * - UI
 *
 *=================================================================================
