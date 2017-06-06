@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.json.simple.parser.ParseException;
 
 public class Message {
-	public enum MessageType {CONTROL, DATA, ERROR}
+	public enum MessageType {CONTROL, DATA, ERROR, ACK}
 	
 	public MessageHeader header;
 	public MessageBody body;
@@ -13,7 +13,8 @@ public class Message {
 	public Message(MessageType type, Integer messageID, MessageBody bdy) throws Exception {		
 		if ( 	(type != MessageType.CONTROL && bdy instanceof ControlMessage) ||
 				(type != MessageType.DATA && bdy instanceof DataMessage) ||
-				(type != MessageType.ERROR && bdy instanceof ErrorMessage)
+				(type != MessageType.ERROR && bdy instanceof ErrorMessage) ||
+				(type != MessageType.ACK && bdy instanceof AckMessage)
 				) {
 			String err = "Conflicting message type and message body." + System.lineSeparator() + "Message type: " + type + System.lineSeparator() + "Message body: " + bdy.getClass();
 			throw new Exception(err);
