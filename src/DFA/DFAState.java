@@ -23,9 +23,11 @@ public class DFAState {
 		MessageBody messageBody = message.body;
 		Message errorMessage = null;
 		int messageID = message.header.messageID;
-		
+		ControlMessage controlMessage = null;
+		JSONObject params = null;
 		if(messageBody instanceof ControlMessage){
-			ControlMessage controlMessage = (ControlMessage) messageBody;
+			controlMessage = (ControlMessage) messageBody;
+			params = controlMessage.params;
 			byte command = controlMessage.command;
 			switch (currentState) {
 				case PREFLIGHT:
@@ -82,7 +84,6 @@ public class DFAState {
 				case BEACON:	
 							switch (command) {
 								case 0x00:
-											JSONObject params = controlMessage.params;
 											if(!params.containsKey("to_mode")){
 												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.JSON_PARAMETER_ERROR));
 												response = new DFAResponse(errorMessage, true, "to_mode field is "
@@ -128,7 +129,9 @@ public class DFAState {
 			errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));
 			return new DFAResponse(errorMessage, true, "Invalid messageBody type");
 		}
-		nextState = new DFAResponse(message, false, null);
+		ControlMessage responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
+		Message responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);
+		nextState = new DFAResponse(responseMessage, false, null);
 		return nextState;
 	}
 }

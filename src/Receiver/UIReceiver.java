@@ -17,6 +17,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.swing.*;
 
 import Drone.DroneServer;
+import messages.Message;
 
 import java.net.*;
 
@@ -28,16 +29,22 @@ public class UIReceiver {
 	private int LogStringCount = 0;
 	private JScrollPane sp;
 	private JPasswordField passwordField;
+	
+	public String VERSION = "1.1";
+	public String RandomNum = "234";
 
 	public String PORTNUMBER = "8080";
 	public String HOSTNAME = "127.0.0.1";
 	public static UIReceiver swingControlDemo;
 	public Socket echoSocket;
 	private boolean powerOn = false;
+	
+	static public Message responseDroneMessage;
 
 	private ReceiverClient receiverClient;
 	public readACK readACK;
 	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
+	public BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 
 	public UIReceiver() {
 		prepareGUI();
@@ -389,8 +396,8 @@ public class UIReceiver {
 					String PASSWORD = new String(cs);
 					try {
 						echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
-						receiverClient = new ReceiverClient(echoSocket, swingControlDemo,PASSWORD);
-						readACK = new readACK(echoSocket, swingControlDemo);
+						receiverClient = new ReceiverClient(echoSocket, swingControlDemo,PASSWORD,VERSION,RandomNum);
+						readACK = new readACK(echoSocket, swingControlDemo,PASSWORD,VERSION,RandomNum);
 						 				
 						Thread t = new Thread(receiverClient);
 						t.start();

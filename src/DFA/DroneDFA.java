@@ -94,7 +94,9 @@ public class DroneDFA extends DFA {
 						//Add random number from drone
 						params.put("random number B", String.valueOf(Math.random()));
 						controlMessage.command = 0x01;
-						response = new DFAResponse(message, false, null);
+						ControlMessage responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
+						Message responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);
+						response = new DFAResponse(responseMessage, false, null);
 						return response;
 			case 0x02:
 						//Verify Version
@@ -142,7 +144,10 @@ public class DroneDFA extends DFA {
 							response = new DFAResponse(errorMessage, true, "random number B sent by drone is invalid");
 							return response;
 						}
-						response = new DFAResponse(message, false, null);
+						
+						responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
+						responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);
+						response = new DFAResponse(responseMessage, false, null);
 						return response;
 			
 			default:
