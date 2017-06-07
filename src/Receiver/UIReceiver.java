@@ -46,6 +46,7 @@ public class UIReceiver {
 	public readACK readACK;
 	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
 	public BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+	public BlockingQueue<Integer> timeoutQueue = new LinkedBlockingQueue<Integer>();
 
 	public UIReceiver() {
 		prepareGUI();

@@ -40,12 +40,18 @@ public class readACK implements Runnable {
 		try {
 			dIn = new DataInputStream(echoSocket.getInputStream());
 			while(true){
+			if (UI.timeoutQueue.size() > 6){
+				UI.display("LOST SIGNAL!!!!!!");
+			} else if (UI.timeoutQueue.size() > 3){
+				UI.display("LOW SIGNAL!!!!!!");
+			}
 			if ((length = dIn.readInt()) > 0) {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
 					dIn.readFully(messagebyte, 0, messagebyte.length);
 					Message msg;
 					msg = Message.fromByteArray(messagebyte);
+					UI.timeoutQueue.poll();
 					UI.display("Received Message Detail: \n" + msg.toString());
 //					testDisplay(msg);
 					// if isAuthenticate, the message is ack or err

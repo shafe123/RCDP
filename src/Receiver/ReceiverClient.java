@@ -498,6 +498,7 @@ public class ReceiverClient implements Runnable {
 	private void sendMSG(Message msg, DataOutputStream dOut) throws IOException {
 		// TODO Auto-generated method stub
 //		DFAResponse nextState = DFAState.getNextState(msg, currentState);
+		UI.timeoutQueue.offer(msg.header.messageID);
 		dOut.writeInt(Message.toByteArray(msg).length);
 		dOut.write(Message.toByteArray(msg));
 		
