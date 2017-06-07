@@ -176,7 +176,7 @@ public class ReceiverClient implements Runnable {
 					} else {
 						MSGType = MessageType.CONTROL;
 						// error case invalid state uncomment next line
-						MSGType = MessageType.TEST;
+//						MSGType = MessageType.TEST;
 						commandbyte = 0x02;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
