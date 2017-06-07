@@ -16,7 +16,7 @@
 * is simulated as the interface provides various buttons the represent
 * the operations of the drone and the receiver. The messages will be visible
 * in a scrolling text box showing the user the current message execution
-* and provide any feed back as necessary.
+* and provide any feed back as necessary. Contains two classes.
 *
 * Requirements (Additional details can be found in the file below):
 * - UI

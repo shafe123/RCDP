@@ -1,3 +1,25 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: DFAState.java
+*
+* Description:
+* This class provides static methods to process DFA States and checks the current
+* state against and acceptable message and returns an error message.
+*
+* Requirements (Additional details can be found in the file below):
+* - STATEFUL
+*
+*=================================================================================
+* */
+
 package DFA;
 
 import org.json.simple.JSONObject;
@@ -10,14 +32,18 @@ import messages.Message.MessageType;
 import messages.Message;
 import messages.MessageBody;
 
-/**
- * 
- * @author Ajinkya
- * This class provides static methods to process DFA States 
- */
 public class DFAState {
+
 	static DFAResponse nextState;
 
+	/**
+	 * This method returns a object type of DFAResponse based on the message, control type, and current state.
+	 * If an invalid command is sent the function will return an error message.
+	 * @param message of type Message the current message to be processed
+	 * @param currentState of type ControlType which is the current state of the message
+	 * @return a DFAResponse for the next state
+	 * @throws Exception ???
+	 */
 	public static DFAResponse getNextState(Message message, ControlType currentState) throws Exception {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
@@ -25,10 +51,18 @@ public class DFAState {
 		int messageID = message.header.messageID;
 		ControlMessage controlMessage = null;
 		JSONObject params = null;
+
+		/**
+		 * Checks to see if the message is a control message
+		 */
 		if(messageBody instanceof ControlMessage){
 			controlMessage = (ControlMessage) messageBody;
 			params = controlMessage.params;
 			byte command = controlMessage.command;
+
+			/**
+			 * Checks the message against the current state
+			 */
 			switch (currentState) {
 				case PREFLIGHT:
 								switch (command) {
@@ -125,6 +159,10 @@ public class DFAState {
 							return new DFAResponse(errorMessage, true, "Current State is Invalid");
 			}
 		}
+
+		/**
+		 * If not, it returns an error message
+		 */
 		else{
 			errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));
 			return new DFAResponse(errorMessage, true, "Invalid messageBody type");
