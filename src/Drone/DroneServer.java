@@ -22,7 +22,7 @@ import messages.ControlMessage.ControlType;
 
 public class DroneServer implements Runnable {
 	public String PORT_NUMBER;
-	public String PASSWORD = "password";
+	public String PASSWORD;
 	public String DRONE_ID;
 	public UIDrone UI;
 	public String VERSION;
@@ -35,6 +35,7 @@ public class DroneServer implements Runnable {
 	public Message returnmsg;
 	public boolean isAuthenticate = false;
 	public int messageID = 100;
+	public String command;
 
 
 	public DroneServer(String p_number, String passward, String drone_id, UIDrone ui) {
@@ -42,7 +43,7 @@ public class DroneServer implements Runnable {
 		PASSWORD = passward;
 		DRONE_ID = drone_id;
 		UI = ui;
-		VERSION = "1.1";
+		VERSION = "1.2";
 		RandomNum = "234";
 		droneDFA = new DroneDFA(PASSWORD,VERSION,RandomNum,DRONE_ID);
 
@@ -92,6 +93,7 @@ public class DroneServer implements Runnable {
 				DataOutputStream dOut = new DataOutputStream(clientSocket.getOutputStream());
 				DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());) {
 			int length;
+
 			while ((length = dIn.readInt()) != 0) {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
@@ -105,7 +107,6 @@ public class DroneServer implements Runnable {
 							
 //							droneResponse= droneDFA.authenticate(msg);
 							ackmessageId = msg.header.messageID;
-							
 							nextState = DFAState.getNextState(msg, currentState);
 							if (nextState.isErrorFlag()){
 								returnmsg = nextState.getMessage();
@@ -122,8 +123,6 @@ public class DroneServer implements Runnable {
 //								UI.display("ack sent");
 							}
 							
-							testDisplay(returnmsg);
-
 						}else{
 
 							// if not authenticated, the first message must be receiver hello
@@ -153,6 +152,10 @@ public class DroneServer implements Runnable {
 									AckMessage ackMessage = new AckMessage(ackmessageId);
 									returnmsg = new Message(MessageType.ACK,messageID,ackMessage);
 									messageID ++;
+//									nextState = DFAState.getNextState(msg, currentState);
+//									ControlMessage controlMessage2 = (ControlMessage) nextState.getMessage().body;
+//									currentState = controlMessage2.type;
+									currentState = ControlType.PREFLIGHT;
 									isAuthenticate = true;
 									UI.display("Authenticate Done");
 								}
@@ -162,7 +165,7 @@ public class DroneServer implements Runnable {
 
 							
 						}
-
+						UI.currentState.setText("" + currentState);
 						dOut.writeInt(Message.toByteArray(returnmsg).length);
 						dOut.write(Message.toByteArray(returnmsg));
 						

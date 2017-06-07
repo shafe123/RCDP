@@ -4,8 +4,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import DFA.DFAResponse;
 import DFA.ReceiverDFA;
+import messages.ControlMessage;
 import messages.Message;
 
 public class readACK implements Runnable {
@@ -50,13 +53,15 @@ public class readACK implements Runnable {
 						
 					} else{
 						// if not isAuthenticate, the msg is drone hello
-						UI.display("Drone Hello Received");
+						
+
 						DFAResponse receiverResponse = receiverDFA.authenticate(msg);
 						if (receiverResponse.isErrorFlag()){
 							// if error
 							UI.display(receiverResponse.getErrorMessage());
 						} else{
 							// if not error return reponse drone hello
+//							UI.display("Drone Hello Received");
 							UI.display("responseRDroneHello sent");
 							Message responseRDroneHello = receiverResponse.getMessage();
 							UI.commandQueue.offer("RDH");

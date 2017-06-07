@@ -13,6 +13,8 @@ import java.util.ResourceBundle.Control;
 import org.json.simple.JSONObject;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
+import DFA.DFAResponse;
+import DFA.DFAState;
 import DFA.ReceiverDFA;
 import messages.ControlMessage;
 import messages.ControlMessage.ControlType;
@@ -28,12 +30,14 @@ public class ReceiverClient implements Runnable {
 	private UIReceiver UI;
 	public String command;
 	public Message MSG;
-	public String msgID = "0";
+	public Integer msgID = 0;
 	private Integer droneID = 0;
-	public ControlType status = ControlType.GROUNDED;
+	public ControlType currentState = ControlType.GROUNDED;
 	public boolean automode = false;
 	public boolean propeller = false;
 	public boolean beacon = false;
+	public boolean takeoff = false;
+	public boolean turnon = false;
 	public ControlMessage controlMessage;
 	public Message msg;
 	public Socket echoSocket;
@@ -58,11 +62,11 @@ public class ReceiverClient implements Runnable {
 		PASSWORD = pASSWORD;
 	}
 
-	public String getMsgID() {
+	public Integer getMsgID() {
 		return msgID;
 	}
 
-	public void setMsgID(String msgID) {
+	public void setMsgID(Integer msgID) {
 		this.msgID = msgID;
 	}
 
@@ -115,27 +119,41 @@ public class ReceiverClient implements Runnable {
 
 				switch (command) {
 				case "TurnOn":
+					if (turnon){
+						UI.display("Already connected");
+					}else{
 					MSGType = MessageType.CONTROL;
 					commandbyte = 0x00;
 					json = new JSONObject();
 					json.put("version", VERSION);
 					json.put("random number A", RandomNum);
 					json.put("password", PASSWORD);
-
-					sendMSG(MSGType, commandbyte, json, dOut);
+					
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
+					}
 					
 					break;
 				case "RDH":
 					try {
 						Message RDH = UI.messageQueue.take();
 						sendMSG(RDH, dOut);
+						currentState = ControlType.PREFLIGHT;
+						turnon = true;
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					break;
+
 				case "Up":
-					if (status == ControlType.FLYING) {
+					if (takeoff) {
 						MSGType = MessageType.CONTROL;
 						commandbyte = 0x01;
 						json = new JSONObject();
@@ -143,14 +161,28 @@ public class ReceiverClient implements Runnable {
 						json.put("throttle", "0");
 						json.put("attitude", "pitch");
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					} else {
 						MSGType = MessageType.CONTROL;
 						commandbyte = 0x02;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
-
-						sendMSG(MSGType, commandbyte, json, dOut);
+						takeoff = true;
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					}
 					break;
 				case "Down":
@@ -161,7 +193,14 @@ public class ReceiverClient implements Runnable {
 					json.put("throttle", "0");
 					json.put("attitude", "pitch");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						changeState(msgg);
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 
 					break;
 				case "RollLeft":
@@ -170,9 +209,16 @@ public class ReceiverClient implements Runnable {
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
-					json.put("attitude", "roll");
-
-					sendMSG(MSGType, commandbyte, json, dOut);
+					json.put("attitude", "rollleft");
+					
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						changeState(msgg);
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 					break;
 				case "RollRight":
 					MSGType = MessageType.CONTROL;
@@ -180,9 +226,16 @@ public class ReceiverClient implements Runnable {
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
-					json.put("attitude", "roll");
+					json.put("attitude", "rollright");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						changeState(msgg);
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 
 					break;
 				case "Left":
@@ -193,7 +246,14 @@ public class ReceiverClient implements Runnable {
 					json.put("throttle", "0");
 					json.put("attitude", "yaw");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						changeState(msgg);
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 					break;
 				case "Right":
 					MSGType = MessageType.CONTROL;
@@ -203,7 +263,14 @@ public class ReceiverClient implements Runnable {
 					json.put("throttle", "0");
 					json.put("attitude", "yaw");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 					break;
 				case "Forward":
 					MSGType = MessageType.CONTROL;
@@ -213,7 +280,14 @@ public class ReceiverClient implements Runnable {
 					json.put("throttle", "0");
 					json.put("attitude", "forward");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						changeState(msgg);
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 					break;
 				case "Backward":
 					MSGType = MessageType.CONTROL;
@@ -223,17 +297,32 @@ public class ReceiverClient implements Runnable {
 					json.put("throttle", "0");
 					json.put("attitude", "backward");
 
-					sendMSG(MSGType, commandbyte, json, dOut);
+					try {
+						Message msgg = getReturnMsg(MSGType, commandbyte, json);
+						changeState(msgg);
+						sendMSG(msgg, dOut);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						UI.display(e1.getMessage());
+					}
 					break;
 				case "Land":
-					if (status == ControlType.FLYING) {
+					if (currentState == ControlType.FLYING) {
 						MSGType = MessageType.CONTROL;
 						commandbyte = 0x03;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("landing_location", "123,123");
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+							
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					} else {
 						MSGType = MessageType.CONTROL;
 						commandbyte = 0x02;
@@ -241,8 +330,16 @@ public class ReceiverClient implements Runnable {
 						json.put("drone_id", droneID);
 						json.put("landing_location", "123,123");
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					}
+					takeoff = false;
 					break;
 				case "Auto":
 					if (automode) {
@@ -254,7 +351,14 @@ public class ReceiverClient implements Runnable {
 						UI.display("auto off");
 						automode = false;
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					} else {
 						MSGType = MessageType.CONTROL;
 						commandbyte = 0x02;
@@ -264,7 +368,14 @@ public class ReceiverClient implements Runnable {
 						UI.display("auto on");
 						automode = true;
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					}
 					break;
 				case "Propeller":
@@ -277,7 +388,14 @@ public class ReceiverClient implements Runnable {
 						UI.display("propeller off");
 						propeller = false;
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					} else {
 						MSGType = MessageType.CONTROL;
 						commandbyte = 0x01;
@@ -287,7 +405,14 @@ public class ReceiverClient implements Runnable {
 						UI.display("propeller on");
 						propeller = true;
 
-						sendMSG(MSGType, commandbyte, json, dOut);
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
 					}
 					break;
 				case "Beacon":
@@ -297,20 +422,36 @@ public class ReceiverClient implements Runnable {
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("beacon", "off");
+						json.put("to_mode", ControlType.PREFLIGHT);
 						UI.display("beacon Off");
 						beacon = false;
 
-						sendMSG(MSGType, commandbyte, json, dOut);
-					} else {
-						MSGType = MessageType.CONTROL;
-						commandbyte = 0x02;
-						json = new JSONObject();
-						json.put("drone_id", droneID);
-						json.put("beacon", "on");
-						UI.display("beacon On");
-						beacon = true;
-						sendMSG(MSGType, commandbyte, json, dOut);
-					}
+						try {
+							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+							changeState(msgg);
+							sendMSG(msgg, dOut);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							UI.display(e1.getMessage());
+						}
+					} 
+//					else {
+//						MSGType = MessageType.CONTROL;
+//						commandbyte = 0x02;
+//						json = new JSONObject();
+//						json.put("drone_id", droneID);
+//						json.put("beacon", "on");
+//						UI.display("beacon On");
+//						beacon = true;
+//						try {
+//							Message msgg = getReturnMsg(MSGType, commandbyte, json);
+//							changeState(msgg);
+//							sendMSG(msgg, dOut);
+//						} catch (Exception e1) {
+//							// TODO Auto-generated catch block
+//							UI.display(e1.getMessage());
+//						}
+//					}
 					break;
 				default:
 					break;
@@ -336,21 +477,29 @@ public class ReceiverClient implements Runnable {
 	 * method send command
 	 */
 
-	private void sendMSG(MessageType mSGType, byte commandbyte, JSONObject json, DataOutputStream dOut) {
+	public void changeState(Message message){
 		try {
-			ControlMessage controlMessage = new ControlMessage(status, commandbyte, json);
-			Message mup = new Message(mSGType, 3, controlMessage);
-			dOut.writeInt(Message.toByteArray(mup).length);
-			dOut.write(Message.toByteArray(mup));
+			DFAResponse nextState = DFAState.getNextState(message, currentState);
+			ControlMessage controlMessage2 = (ControlMessage) nextState.getMessage().body;
+			currentState = controlMessage2.type;
 		} catch (Exception e) {
-			UI.display(e.getMessage());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		UI.display(command + " command sent");
 	}
-	private void sendMSG(Message take, DataOutputStream dOut) throws IOException {
+	
+	public Message getReturnMsg(MessageType mSGType, byte commandbyte, JSONObject json) throws Exception{
+		ControlMessage controlMessage = new ControlMessage(currentState, commandbyte, json);
+		Message mup = new Message(mSGType, 3, controlMessage);
+		return mup;
+	}
+	
+
+	private void sendMSG(Message msg, DataOutputStream dOut) throws IOException {
 		// TODO Auto-generated method stub
-		dOut.writeInt(Message.toByteArray(take).length);
-		dOut.write(Message.toByteArray(take));
+//		DFAResponse nextState = DFAState.getNextState(msg, currentState);
+		dOut.writeInt(Message.toByteArray(msg).length);
+		dOut.write(Message.toByteArray(msg));
 		
 	}
 }
