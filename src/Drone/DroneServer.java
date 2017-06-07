@@ -31,6 +31,7 @@ public class DroneServer implements Runnable {
 	public DFAResponse droneResponse;
 	public DFAResponse nextState;
 	public ControlType currentState = ControlType.GROUNDED;
+	
 	public int ackmessageId;
 	public Message returnmsg;
 	public boolean isAuthenticate = false;
@@ -105,7 +106,6 @@ public class DroneServer implements Runnable {
 						UI.display("Received Message Detail: \n" + msg.toString());
 						if (isAuthenticate){
 							
-//							droneResponse= droneDFA.authenticate(msg);
 							ackmessageId = msg.header.messageID;
 							nextState = DFAState.getNextState(msg, currentState);
 							if (nextState.isErrorFlag()){
@@ -120,7 +120,6 @@ public class DroneServer implements Runnable {
 								currentState = controlMessage.type;
 								returnmsg = new Message(MessageType.ACK,messageID,ackMessage);
 								messageID ++;
-//								UI.display("ack sent");
 							}
 							
 						}else{
@@ -152,10 +151,9 @@ public class DroneServer implements Runnable {
 									AckMessage ackMessage = new AckMessage(ackmessageId);
 									returnmsg = new Message(MessageType.ACK,messageID,ackMessage);
 									messageID ++;
-//									nextState = DFAState.getNextState(msg, currentState);
-//									ControlMessage controlMessage2 = (ControlMessage) nextState.getMessage().body;
-//									currentState = controlMessage2.type;
+
 									currentState = ControlType.PREFLIGHT;
+
 									isAuthenticate = true;
 									UI.display("Authenticate Done");
 								}
@@ -189,12 +187,4 @@ public class DroneServer implements Runnable {
 
 	}
 
-	private void displayMsg(Message msg) {
-	}
-
-	public void testDisplay(Message msg) {
-		for (byte theByte : Message.toByteArray(msg)) {
-			UI.display(Integer.toHexString(theByte));
-		}
-	}
 }

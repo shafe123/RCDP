@@ -33,9 +33,11 @@ public class ReceiverClient implements Runnable {
 	public Integer msgID = 0;
 	private Integer droneID = 0;
 	public ControlType currentState = ControlType.GROUNDED;
+
 	public boolean automode = false;
 	public boolean propeller = false;
 	public boolean beacon = false;
+
 	public boolean takeoff = false;
 	public boolean turnon = false;
 	public ControlMessage controlMessage;
@@ -51,6 +53,8 @@ public class ReceiverClient implements Runnable {
 		PASSWORD = password;
 		VERSION = version;
 		RandomNum = randomNum;
+// errorcase3 Authentication Random Number error use this line
+//		RandomNum = "";
 		receiverDFA = new ReceiverDFA(PASSWORD, VERSION, RandomNum);
 	}
 
@@ -171,6 +175,8 @@ public class ReceiverClient implements Runnable {
 						}
 					} else {
 						MSGType = MessageType.CONTROL;
+						// error case invalid state uncomment next line
+						MSGType = MessageType.TEST;
 						commandbyte = 0x02;
 						json = new JSONObject();
 						json.put("drone_id", droneID);

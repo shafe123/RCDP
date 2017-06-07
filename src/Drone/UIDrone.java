@@ -130,14 +130,6 @@ public class UIDrone {
 		controlPanel.add(JdroneId);
 		controlPanel.add(currentState);
 		controlPanel.add(currentStatelabel);
-		
-//		controlPanel.add(errorLable);
-////		controlPanel.add(E0000Button);
-//		controlPanel.add(E0001Button);
-//		controlPanel.add(E0010Button);
-//		controlPanel.add(E0101Button);
-//		controlPanel.add(E0111Button);
-//		controlPanel.add(E1000Button);
 
 		gbs.fill = GridBagConstraints.HORIZONTAL;
 		gbs.gridwidth = 2;
@@ -336,12 +328,7 @@ public class UIDrone {
 			String command = e.getActionCommand();
 			String TurnOn = "TurnOn, port number: " + portNumber;
 			String TurnOff = "TurnOff";
-//			String E0000 = "Simulate Error 0000: Can not find drone";
-//			String E0001 = "Simulate Error 0001: Connection error";
-//			String E0010 = "Simulate Error 0010: Authentication error";
-//			String E0101 = "Simulate Error 0101: Drone low battery";
-//			String E0111 = "Simulate Error 0111: Weak signal";
-//			String E1000 = "Simulate Error 1000: Lost signal";
+
 
 			if (command.equals("TurnOn")) {
 				display(TurnOn);
@@ -355,28 +342,10 @@ public class UIDrone {
 
 			} else if (command.equals("TurnOff")) {
 				display(TurnOff);
-//				commandQueue.offer("TurnOff");
-//				try {
-//					TimeUnit.SECONDS.sleep(1);
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
+
 				System.exit(0);
 			} 
-//			else if (command.equals("E0000")) {
-//				display(E0000);
-//			} else if (command.equals("E0001")) {
-//				display(E0001);
-//			} else if (command.equals("E0010")) {
-//				display(E0010);
-//			} else if (command.equals("E0101")) {
-//				display(E0101);
-//			} else if (command.equals("E0111")) {
-//				display(E0111);
-//			} else if (command.equals("E1000")) {
-//				display(E1000);
-//			}
+
 		}
 	}
 

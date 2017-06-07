@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.json.simple.parser.ParseException;
 
 public class Message {
-	public enum MessageType {CONTROL, DATA, ERROR, ACK}
+	public enum MessageType {CONTROL, DATA, ERROR, ACK, TEST}
 	
 	public MessageHeader header;
 	public MessageBody body;
