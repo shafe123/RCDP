@@ -155,7 +155,7 @@ public class ReceiverClient implements Runnable {
 				case "Up":
 					if (takeoff) {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x01;
+						commandbyte = 0x04;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("throttle", "0");
@@ -187,7 +187,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "Down":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -205,7 +205,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "RollLeft":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -222,7 +222,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "RollRight":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -240,7 +240,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "Left":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -257,7 +257,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "Right":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -274,7 +274,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "Forward":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -291,7 +291,7 @@ public class ReceiverClient implements Runnable {
 					break;
 				case "Backward":
 					MSGType = MessageType.CONTROL;
-					commandbyte = 0x01;
+					commandbyte = 0x04;
 					json = new JSONObject();
 					json.put("drone_id", droneID);
 					json.put("throttle", "0");
@@ -309,7 +309,7 @@ public class ReceiverClient implements Runnable {
 				case "Land":
 					if (currentState == ControlType.FLYING) {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x03;
+						commandbyte = 0x06;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("landing_location", "123,123");
@@ -325,11 +325,11 @@ public class ReceiverClient implements Runnable {
 						}
 					} else {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x02;
+						commandbyte = 0x09;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("landing_location", "123,123");
-
+						
 						try {
 							Message msgg = getReturnMsg(MSGType, commandbyte, json);
 							changeState(msgg);
@@ -338,13 +338,14 @@ public class ReceiverClient implements Runnable {
 							// TODO Auto-generated catch block
 							UI.display(e1.getMessage());
 						}
+						automode = false;
 					}
 					takeoff = false;
 					break;
 				case "Auto":
 					if (automode) {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x00;
+						commandbyte = 0x07;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("automode", "off");
@@ -361,7 +362,7 @@ public class ReceiverClient implements Runnable {
 						}
 					} else {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x02;
+						commandbyte = 0x05;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("automode", "on");
@@ -418,7 +419,7 @@ public class ReceiverClient implements Runnable {
 				case "Beacon":
 					if (beacon) {
 						MSGType = MessageType.CONTROL;
-						commandbyte = 0x00;
+						commandbyte = 0x0A;
 						json = new JSONObject();
 						json.put("drone_id", droneID);
 						json.put("beacon", "off");
