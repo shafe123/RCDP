@@ -42,7 +42,7 @@ public class DFAState {
 	 * @param message of type Message the current message to be processed
 	 * @param currentState of type ControlType which is the current state of the message
 	 * @return a DFAResponse for the next state
-	 * @throws Exception ???
+	 * @throws Exception an IOException
 	 */
 	public static DFAResponse getNextState(Message message, ControlType currentState) throws Exception {
 		DFAResponse response = null;
@@ -161,7 +161,7 @@ public class DFAState {
 		}
 
 		/**
-		 * If not, it returns an error message
+		 * If not, returns an error message
 		 */
 		else{
 			errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));

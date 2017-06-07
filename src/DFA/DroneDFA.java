@@ -1,3 +1,25 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: DroneDFA.java
+*
+* Description:
+* This class provides functionality related to Drone that extends the DFA class
+* and provides drone actions based on the the different states of the protocol.
+*
+* Requirements (Additional details can be found in the file below):
+* - STATEFUL, SERVICE, CONCURRENT
+*
+*=================================================================================
+* */
+
 package DFA;
 
 import org.json.simple.JSONObject;
@@ -9,17 +31,19 @@ import messages.Message;
 import messages.Message.MessageType;
 import messages.MessageBody;
 
-/**
- * 
- * @author Ajinkya
- * This class provides functionality related to Drone
- */
 public class DroneDFA extends DFA {
 	private String password;
 	private String version;
 	private String randomNumber;
 	private String droneID;
-	
+
+	/**
+	 * Constructs a drone based on the parameters passed
+	 * @param password of type String, that represents the password
+	 * @param version of type String, that represents the protocol version
+	 * @param randomNumber of type String, represents the unique number for each message
+	 * @param droneID of type String, represents a unique number identifier for the drone
+	 */
 	public DroneDFA(String password, String version, String randomNumber, String droneID) {
 		this.password = password;
 		this.version = version;
@@ -27,18 +51,32 @@ public class DroneDFA extends DFA {
 		this.droneID = droneID;
 	}
 
-
+	/**
+	 * Authenticate determines if the message sent to the drone is valid based on the
+	 * the DFA. This method throws an exception and may return an error the message
+	 * is invalid.
+	 * @param message of type Message, used to enable the drone to perform an action
+	 * @return type of DFAResponse object
+	 * @throws Exception an IOException
+	 */
 	@Override
 	public DFAResponse authenticate(Message message) throws Exception {
 		DFAResponse response = null;
 		MessageBody messageBody = message.body;
 		Message errorMessage = null;
 		int messageID = message.header.messageID;
-		
+
+		/**
+		 * Checks to see if the message is a control message
+		 */
 		if(messageBody instanceof ControlMessage){
 			ControlMessage controlMessage = (ControlMessage) messageBody;
 			JSONObject params = controlMessage.params;
 			byte command = controlMessage.command;
+
+			/**
+			 * Checks the message against the current state
+			 */
 			switch (command) {
 			case 0x00:
 						if(!params.containsKey("password")){
@@ -155,6 +193,9 @@ public class DroneDFA extends DFA {
 						return new DFAResponse(errorMessage, true, "Invalid Command Byte");
 			}
 		}
+		/**
+		 * If not, returns an error message
+		 */
 		errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_MESSAGE));
 		return new DFAResponse(errorMessage, true, "Message is not of type Control Message");
 	}

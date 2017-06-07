@@ -191,23 +191,15 @@ public class DroneServer implements Runnable {
 									isAuthenticate = true;
 									UI.display("Authenticate Done");
 								}
-								
-
 							}
-
-							
 						}
 
 						dOut.writeInt(Message.toByteArray(returnmsg).length);
 						dOut.write(Message.toByteArray(returnmsg));
-						
-
-
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						UI.display(e.getMessage());
 					}
-
 				}
 			}
 		} catch (IOException e) {
