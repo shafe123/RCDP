@@ -20,13 +20,13 @@ Robustness: <br/>
  under properly configured settings. 
 
 - Robustness: <br/>
- -Can the states handel invalid messages, valid messages for invalid states, <br/>
-valid messages on current state but with invalid operation (i.e. maintain location while changing direction)  
+ -Can the states handel invalid Messages, valid Messages for invalid states, <br/>
+valid Messages on current state but with invalid operation (i.e. maintain location while changing direction)  
 
 - Concurrency: <br/>
  -We need to see if the drone can handel multiple connections. <br/>
 In this case, adding an extra slave receiver, or additional devices. <br/>
- -We need to consider about what would happen is several messages commands<br/>
+ -We need to consider about what would happen is several Messages commands<br/>
  are sent at once. 
 
 - Environment: <br/>

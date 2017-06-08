@@ -22,7 +22,7 @@
 * */
 
 package DFA;
-import messages.Message;
+import Messages.Message;
 
 abstract class DFA {
 	

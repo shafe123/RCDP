@@ -24,17 +24,15 @@
 package Receiver;
 
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.net.Socket;
 
 import org.hamcrest.core.IsInstanceOf;
 
 import DFA.DFAResponse;
 import DFA.ReceiverDFA;
-import messages.ControlMessage;
-import messages.Message;
+import Messages.Message;
 
-public class readACK implements Runnable {
+public class ReadACK implements Runnable {
 
 	public DataInputStream dIn;
 	public UIReceiver UI;
@@ -54,7 +52,7 @@ public class readACK implements Runnable {
 	 * @param version the version of the protocol the receiver currently has of type String
 	 * @param randomNum a randomly generated number to establish unique session
 	 */
-	public readACK(Socket socket,UIReceiver ui,String password,String version, String randomNum) {
+	public ReadACK(Socket socket, UIReceiver ui, String password, String version, String randomNum) {
 		UI = ui;
 		echoSocket = socket;
 		PASSWORD = password;

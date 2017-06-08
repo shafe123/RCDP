@@ -23,13 +23,12 @@ package DFA;
 
 import org.json.simple.JSONObject;
 
-import messages.ControlMessage;
-import messages.ErrorMessage;
-import messages.Message;
-import messages.MessageBody;
-import messages.ControlMessage.ControlType;
-import messages.ErrorMessage.ErrorType;
-import messages.Message.MessageType;
+import Messages.ControlMessage;
+import Messages.ErrorMessage;
+import Messages.Message;
+import Messages.MessageBody;
+import Messages.ErrorMessage.ErrorType;
+import Messages.Message.MessageType;
 
 public class ReceiverDFA extends DFA {
 	private String password;

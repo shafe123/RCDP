@@ -24,12 +24,12 @@ package DFA;
 
 import org.json.simple.JSONObject;
 
-import messages.ControlMessage;
-import messages.ErrorMessage;
-import messages.ErrorMessage.ErrorType;
-import messages.Message;
-import messages.Message.MessageType;
-import messages.MessageBody;
+import Messages.ControlMessage;
+import Messages.ErrorMessage;
+import Messages.ErrorMessage.ErrorType;
+import Messages.Message;
+import Messages.Message.MessageType;
+import Messages.MessageBody;
 
 public class DroneDFA extends DFA {
 	private String password;

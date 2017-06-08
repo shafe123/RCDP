@@ -26,21 +26,14 @@
 
 package Receiver;
 
-import java.io.*;
 import java.lang.*;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.json.simple.JSONObject;
 
-import messages.AckMessage;
-import messages.ControlMessage;
-import messages.ErrorMessage;
-import messages.Message;
-import messages.ControlMessage.ControlType;
-import messages.ErrorMessage.ErrorType;
-import messages.Message.MessageType;
+import Messages.ControlMessage;
+import Messages.Message;
+import Messages.ControlMessage.ControlType;
+import Messages.Message.MessageType;
 
 public class SystemDemo {
 

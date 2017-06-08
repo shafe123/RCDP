@@ -29,22 +29,14 @@ package Receiver;
 import java.awt.*;
 
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import javax.jws.Oneway;
-import javax.net.ssl.HostnameVerifier;
 import javax.swing.*;
 
-import Drone.DroneServer;
-import messages.Message;
+import Messages.Message;
 
 import java.net.*;
 
@@ -69,7 +61,7 @@ public class UIReceiver {
 	static public Message responseDroneMessage;
 
 	private ReceiverClient receiverClient;
-	public readACK readACK;
+	public ReadACK ReadACK;
 	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
 	public BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 	public BlockingQueue<Integer> timeoutQueue = new LinkedBlockingQueue<Integer>();
@@ -413,7 +405,7 @@ public class UIReceiver {
 	/**
 	 * The button clicker listener operates in a way that, if a button is selected, add
 	 * a command to the Queue, and wait for the receiver (i.e. client) to read and
-	 * send its messages
+	 * send its Messages
 	 */
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -433,11 +425,11 @@ public class UIReceiver {
 					try {
 						echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
 						receiverClient = new ReceiverClient(echoSocket, swingControlDemo,PASSWORD,VERSION,RandomNum);
-						readACK = new readACK(echoSocket, swingControlDemo,PASSWORD,VERSION,RandomNum);
+						ReadACK = new ReadACK(echoSocket, swingControlDemo,PASSWORD,VERSION,RandomNum);
 						 				
 						Thread t = new Thread(receiverClient);
 						t.start();
-						Thread t1 = new Thread(readACK);
+						Thread t1 = new Thread(ReadACK);
 						t1.start();
 						display("connected");
 						powerOn = true;

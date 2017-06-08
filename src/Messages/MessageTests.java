@@ -21,7 +21,7 @@
 *=================================================================================
 * */
 
-package messages;
+package Messages;
 
 import static org.junit.Assert.*;
 
@@ -35,10 +35,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import messages.ControlMessage.ControlType;
-import messages.DataMessage.DataType;
-import messages.ErrorMessage.ErrorType;
-import messages.Message.MessageType;
+import Messages.ControlMessage.ControlType;
+import Messages.DataMessage.DataType;
+import Messages.ErrorMessage.ErrorType;
+import Messages.Message.MessageType;
 
 public class MessageTests {
 	Message errMsg;

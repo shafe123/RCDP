@@ -23,25 +23,20 @@
 
 package Drone;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import org.omg.PortableServer.ID_ASSIGNMENT_POLICY_ID;
 
 import DFA.DFAResponse;
 import DFA.DFAState;
 import DFA.DroneDFA;
-import messages.AckMessage;
-import messages.ControlMessage;
-import messages.Message;
-import messages.Message.MessageType;
-import messages.ControlMessage.ControlType;
+import Messages.AckMessage;
+import Messages.ControlMessage;
+import Messages.Message;
+import Messages.Message.MessageType;
+import Messages.ControlMessage.ControlType;
 
 /**
  * DroneServer class implements runnable in order to execute

@@ -21,7 +21,7 @@
 *=================================================================================
 * */
 
-package messages;
+package Messages;
 
 public abstract class MessageBody {
 

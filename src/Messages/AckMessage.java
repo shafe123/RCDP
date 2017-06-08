@@ -19,7 +19,7 @@
 *=================================================================================
 * */
 
-package messages;
+package Messages;
 
 public class AckMessage extends MessageBody {
 	public int MessageID;

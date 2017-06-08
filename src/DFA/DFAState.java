@@ -24,13 +24,13 @@ package DFA;
 
 import org.json.simple.JSONObject;
 
-import messages.ControlMessage;
-import messages.ErrorMessage;
-import messages.ControlMessage.ControlType;
-import messages.ErrorMessage.ErrorType;
-import messages.Message.MessageType;
-import messages.Message;
-import messages.MessageBody;
+import Messages.ControlMessage;
+import Messages.ErrorMessage;
+import Messages.ControlMessage.ControlType;
+import Messages.ErrorMessage.ErrorType;
+import Messages.Message.MessageType;
+import Messages.Message;
+import Messages.MessageBody;
 
 public class DFAState {
 

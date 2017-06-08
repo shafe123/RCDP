@@ -19,11 +19,11 @@
 *=================================================================================
 * */
 
-package messages;
+package Messages;
 
 /**
  * These are five main command types along with their corresponding message which are
- * used to create the various messages and enforce shamefulness.
+ * used to create the various Messages and enforce shamefulness.
  */
 public class CommandTypes {
 	public enum UniversalCommand { ALARM; }

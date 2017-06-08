@@ -21,18 +21,14 @@
 
 package DFA;
 
-import java.net.Socket;
-
 import org.json.simple.JSONObject;
 
 import Drone.DroneServer;
 import Drone.UIDrone;
-import Receiver.ReceiverClient;
-import Receiver.UIReceiver;
-import messages.ControlMessage;
-import messages.Message;
-import messages.ControlMessage.ControlType;
-import messages.Message.MessageType;
+import Messages.ControlMessage;
+import Messages.Message;
+import Messages.ControlMessage.ControlType;
+import Messages.Message.MessageType;
 
 public class TestDFA {
 	public static void main(String[] args) throws Exception {

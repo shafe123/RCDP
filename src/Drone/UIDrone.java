@@ -28,17 +28,10 @@ package Drone;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.io.*;
 
 import javax.swing.*;
-
-import DFA.DroneDFA;
-import messages.Message;
 
 /**
  * UI swing setup

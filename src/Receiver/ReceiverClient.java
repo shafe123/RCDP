@@ -23,26 +23,20 @@
 
 package Receiver;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ResourceBundle.Control;
 
 import org.json.simple.JSONObject;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import DFA.DFAResponse;
 import DFA.DFAState;
 import DFA.ReceiverDFA;
-import messages.ControlMessage;
-import messages.ControlMessage.ControlType;
-import messages.Message.MessageType;
-import messages.Message;
+import Messages.ControlMessage;
+import Messages.ControlMessage.ControlType;
+import Messages.Message.MessageType;
+import Messages.Message;
 
 public class ReceiverClient implements Runnable {
 

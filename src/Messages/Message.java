@@ -20,11 +20,9 @@
 *=================================================================================
 * */
 
-package messages;
+package Messages;
 
 import java.util.Arrays;
-
-import org.json.simple.parser.ParseException;
 
 public class Message {
 

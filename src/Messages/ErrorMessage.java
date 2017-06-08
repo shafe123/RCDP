@@ -21,7 +21,7 @@
 *=================================================================================
 * */
 
-package messages;
+package Messages;
 
 public class ErrorMessage extends MessageBody {
 	public enum ErrorType { CANNOT_FIND_DRONE, CONNECTION_ERROR, AUTHENTICATION_ERROR, 

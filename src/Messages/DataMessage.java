@@ -20,7 +20,7 @@
 *
 *=================================================================================
 * */
-package messages;
+package Messages;
 
 import java.util.Arrays;
 

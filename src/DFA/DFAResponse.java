@@ -23,7 +23,7 @@
 
 package DFA;
 
-import messages.Message;
+import Messages.Message;
 
 public class DFAResponse {
 	Message message = null;
