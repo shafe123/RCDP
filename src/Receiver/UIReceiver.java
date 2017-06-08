@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.jws.Oneway;
 import javax.net.ssl.HostnameVerifier;
@@ -71,6 +72,7 @@ public class UIReceiver {
 	public readACK readACK;
 	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
 	public BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+	public BlockingQueue<Integer> timeoutQueue = new LinkedBlockingQueue<Integer>();
 
 	public UIReceiver() {
 		prepareGUI();
@@ -402,6 +404,8 @@ public class UIReceiver {
 		LogStringCount++;
 		log.append(LogStringCount + ":" + logstring + "\n");
 		statusLabel.setText(log.toString());
+		statusLabel.setCaretPosition(statusLabel.getDocument().getLength()); 
+
 	}
 	
 	public void inputCommand(){}
@@ -419,9 +423,9 @@ public class UIReceiver {
 			switch (command) {
 			case "TurnOn":
 				display(TurnOn);
-				if (powerOn){
-					display("Already turned on");
-				}else{
+//				if (powerOn){
+//					display("Already turned on");
+//				}else{
 						while (commandQueue.poll() != null){}
 		
 					char[] cs = passwordField.getPassword();
@@ -442,10 +446,19 @@ public class UIReceiver {
 					} catch (NumberFormatException | IOException e1) {
 						display(e1.getMessage());
 					}
-				}
+//				}
+
 				break;
 			case "TurnOff":
+				try {
+					TimeUnit.SECONDS.sleep(1);
+					echoSocket.close();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				System.exit(0);
+				break;
 			default:
 				commandQueue.offer(command);
 				break;

@@ -82,16 +82,16 @@ public class DFAState {
 								break;
 				case FLYING:	
 								switch (command) {
-									case 0x00:
+									case 0x03:
 												controlMessage.type = ControlType.FLYING;
 												break;
-									case 0x01:
+									case 0x04:
 												controlMessage.type = ControlType.FLYING;
 												break;
-									case 0x02:
+									case 0x05:
 												controlMessage.type = ControlType.AUTONOMOUS;
 												break;
-									case 0x03:
+									case 0x06:
 												controlMessage.type = ControlType.PREFLIGHT;
 												break;
 									default:
@@ -101,13 +101,13 @@ public class DFAState {
 								break;
 				case AUTONOMOUS:
 								switch (command) {
-									case 0x00:
+									case 0x07:
 												controlMessage.type = ControlType.FLYING;
 												break;
-									case 0x01:
+									case 0x08:
 												controlMessage.type = ControlType.FLYING;
 												break;
-									case 0x02:
+									case 0x09:
 												controlMessage.type = ControlType.PREFLIGHT;
 												break;
 									default:
@@ -117,7 +117,7 @@ public class DFAState {
 								break;
 				case BEACON:	
 							switch (command) {
-								case 0x00:
+								case 0x0A:
 											if(!params.containsKey("to_mode")){
 												errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.JSON_PARAMETER_ERROR));
 												response = new DFAResponse(errorMessage, true, "to_mode field is "
@@ -146,7 +146,7 @@ public class DFAState {
 												return response;
 											}
 											break;
-								case 0x01:
+								case 0x0B:
 											controlMessage.type = ControlType.BEACON;
 											break;
 								default:

@@ -102,7 +102,7 @@ public class ControlMessage extends MessageBody {
 	public byte[] toByteArray() {
 		byte[] body = new byte[this.length()];
 		body[0] = (byte) type.ordinal();
-		body[1] = 0;
+		body[1] = this.command;
 		
 		byte[] json = params.toString().getBytes();
 		for (int i = 0; i < json.length; i++)

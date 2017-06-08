@@ -30,6 +30,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.io.*;
 
 import javax.swing.*;
@@ -50,6 +53,8 @@ public class UIDrone {
 	private static UIDrone swingControlDemo;
 	private JPasswordField Jpassword;
 	private JTextField JdroneId;
+	public JLabel currentState;
+	public BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
 
 	/**
 	 * Default server port, credentials, and variables
@@ -91,7 +96,6 @@ public class UIDrone {
 		mainFrame.add(controlPanel);
 		mainFrame.getContentPane().add(sp);
 		mainFrame.setVisible(true);
-
 	}
 
 	/**
@@ -110,7 +114,13 @@ public class UIDrone {
 //		Jpassword.setText("secret");
 		
 		JLabel d_id = new JLabel("set Drone ID");
+		
 		JdroneId = new JTextField(10); 
+		
+		JLabel currentStatelabel = new JLabel("Current State: ");
+		
+		currentState = new JLabel("");
+		
 
 		turnOnButton.setActionCommand("TurnOn");
 		turnOffButton.setActionCommand("TurnOff");
@@ -153,14 +163,8 @@ public class UIDrone {
 		controlPanel.add(Jpassword);
 		controlPanel.add(d_id);
 		controlPanel.add(JdroneId);
-		
-		controlPanel.add(errorLable);
-		controlPanel.add(E0000Button);
-		controlPanel.add(E0001Button);
-		controlPanel.add(E0010Button);
-		controlPanel.add(E0101Button);
-		controlPanel.add(E0111Button);
-		controlPanel.add(E1000Button);
+		controlPanel.add(currentState);
+		controlPanel.add(currentStatelabel);
 
 		gbs.fill = GridBagConstraints.HORIZONTAL;
 		gbs.gridwidth = 2;
@@ -235,90 +239,104 @@ public class UIDrone {
 		gbs.ipadx = 30;
 		gbs.ipady = 20;
 		gbl.setConstraints(turnOffButton, gbs);
-
+		
 		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
+		gbs.gridwidth = 1;
 		gbs.gridheight = 1;
 		gbs.insets = new Insets(1, 0, 1, 0);
 		gbs.weightx = 1;
 		gbs.weighty = 1;
 		gbs.gridx = 0;
 		gbs.gridy = 4;
-		gbs.ipadx = 200;
+		gbs.ipadx = 30;
 		gbs.ipady = 20;
-		gbl.setConstraints(errorLable, gbs);
+		gbl.setConstraints(currentStatelabel, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
+		gbs.gridwidth = 1;
 		gbs.gridheight = 1;
 		gbs.insets = new Insets(1, 0, 1, 0);
 		gbs.weightx = 1;
 		gbs.weighty = 1;
-		gbs.gridx = 0;
-		gbs.gridy = 5;
-		gbs.ipadx = 400;
+		gbs.gridx = 1;
+		gbs.gridy = 4;
+		gbs.ipadx = 30;
 		gbs.ipady = 20;
-		gbl.setConstraints(E0000Button, gbs);
-
-		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
-		gbs.gridheight = 1;
-		gbs.insets = new Insets(1, 0, 1, 0);
-		gbs.weightx = 1;
-		gbs.weighty = 1;
-		gbs.gridx = 0;
-		gbs.gridy = 6;
-		gbs.ipadx = 400;
-		gbs.ipady = 20;
-		gbl.setConstraints(E0001Button, gbs);
-
-		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
-		gbs.gridheight = 1;
-		gbs.insets = new Insets(1, 0, 1, 0);
-		gbs.weightx = 1;
-		gbs.weighty = 1;
-		gbs.gridx = 0;
-		gbs.gridy = 7;
-		gbs.ipadx = 400;
-		gbs.ipady = 20;
-		gbl.setConstraints(E0010Button, gbs);
-
-		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
-		gbs.gridheight = 1;
-		gbs.insets = new Insets(1, 0, 1, 0);
-		gbs.weightx = 1;
-		gbs.weighty = 1;
-		gbs.gridx = 0;
-		gbs.gridy = 8;
-		gbs.ipadx = 400;
-		gbs.ipady = 20;
-		gbl.setConstraints(E0101Button, gbs);
-
-		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
-		gbs.gridheight = 1;
-		gbs.insets = new Insets(1, 0, 1, 0);
-		gbs.weightx = 1;
-		gbs.weighty = 1;
-		gbs.gridx = 0;
-		gbs.gridy = 9;
-		gbs.ipadx = 400;
-		gbs.ipady = 20;
-		gbl.setConstraints(E0111Button, gbs);
-
-		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
-		gbs.gridheight = 1;
-		gbs.insets = new Insets(1, 0, 1, 0);
-		gbs.weightx = 1;
-		gbs.weighty = 1;
-		gbs.gridx = 0;
-		gbs.gridy = 10;
-		gbs.ipadx = 400;
-		gbs.ipady = 20;
-		gbl.setConstraints(E1000Button, gbs);
+		gbl.setConstraints(currentState, gbs);
+		
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 2;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 0;
+//		gbs.gridy = 5;
+//		gbs.ipadx = 200;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(errorLable, gbs);
+//
+//
+//
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 2;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 0;
+//		gbs.gridy = 6;
+//		gbs.ipadx = 400;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(E0001Button, gbs);
+//
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 2;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 0;
+//		gbs.gridy = 7;
+//		gbs.ipadx = 400;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(E0010Button, gbs);
+//
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 2;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 0;
+//		gbs.gridy = 8;
+//		gbs.ipadx = 400;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(E0101Button, gbs);
+//
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 2;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 0;
+//		gbs.gridy = 9;
+//		gbs.ipadx = 400;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(E0111Button, gbs);
+//
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 2;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 0;
+//		gbs.gridy = 10;
+//		gbs.ipadx = 400;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(E1000Button, gbs);
 
 		mainFrame.setVisible(true);
 	}
@@ -332,6 +350,7 @@ public class UIDrone {
 		LogStringCount++;
 		log.append(LogStringCount + ":" + s + "\n");
 		statusLabel.setText(log.toString());
+		statusLabel.setCaretPosition(statusLabel.getDocument().getLength()); 
 	}
 
 	/**
@@ -343,12 +362,7 @@ public class UIDrone {
 			String command = e.getActionCommand();
 			String TurnOn = "TurnOn, port number: " + portNumber;
 			String TurnOff = "TurnOff";
-			String E0000 = "Simulate Error 0000: Can not find drone";
-			String E0001 = "Simulate Error 0001: Connection error";
-			String E0010 = "Simulate Error 0010: Authentication error";
-			String E0101 = "Simulate Error 0101: Drone low battery";
-			String E0111 = "Simulate Error 0111: Weak signal";
-			String E1000 = "Simulate Error 1000: Lost signal";
+
 
 			if (command.equals("TurnOn")) {
 				display(TurnOn);
@@ -356,28 +370,15 @@ public class UIDrone {
 				password = new String(cs);
 				DroneId = JdroneId.getText();
 				display("DroneID: "+DroneId+ " password:" + password);
-
+				currentState.setText("" + "GROUNDED");
 				Thread t = new Thread( new DroneServer(portNumber,password,DroneId,swingControlDemo));
 				t.start();
 
 			} else if (command.equals("TurnOff")) {
 				display(TurnOff);
+
 				System.exit(0);
-			} else if (command.equals("E0000")) {
-				display(E0000);
-			} else if (command.equals("E0001")) {
-				display(E0001);
-			} else if (command.equals("E0010")) {
-				display(E0010);
-			} else if (command.equals("E0101")) {
-				display(E0101);
-			} else if (command.equals("E0111")) {
-				display(E0111);
-			} else if (command.equals("E1000")) {
-				display(E1000);
-			}
+			} 
 		}
 	}
-
-
 }

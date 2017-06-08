@@ -130,7 +130,7 @@ public class DroneDFA extends DFA {
 						}
 						
 						//Add random number from drone
-						params.put("random number B", String.valueOf(Math.random()));
+						params.put("random number B", randomNumber);
 						controlMessage.command = 0x01;
 						ControlMessage responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
 						Message responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);

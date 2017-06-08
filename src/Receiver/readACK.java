@@ -27,8 +27,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import DFA.DFAResponse;
 import DFA.ReceiverDFA;
+import messages.ControlMessage;
 import messages.Message;
 
 public class readACK implements Runnable {
@@ -69,12 +72,19 @@ public class readACK implements Runnable {
 		try {
 			dIn = new DataInputStream(echoSocket.getInputStream());
 			while(true){
+			if (UI.timeoutQueue.size() > 6){
+				UI.display("LOST SIGNAL!!!!!!");
+			} else if (UI.timeoutQueue.size() > 3){
+				UI.display("LOW SIGNAL!!!!!!");
+			}
 			if ((length = dIn.readInt()) > 0) {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
 					dIn.readFully(messagebyte, 0, messagebyte.length);
 					Message msg;
 					msg = Message.fromByteArray(messagebyte);
+			// error case lost signal error, comment next line and send any 8 commands
+					UI.timeoutQueue.poll();
 					UI.display("Received Message Detail: \n" + msg.toString());
 //					testDisplay(msg);
 
@@ -93,7 +103,9 @@ public class readACK implements Runnable {
 						// if error
 						if (receiverResponse.isErrorFlag()){
 							UI.display(receiverResponse.getErrorMessage());
-						} else{ // if no error return repose drone hello
+
+						} else{ // if not error return response drone hello
+//							UI.display("Drone Hello Received");
 							UI.display("responseRDroneHello sent");
 							Message responseRDroneHello = receiverResponse.getMessage();
 							UI.commandQueue.offer("RDH");

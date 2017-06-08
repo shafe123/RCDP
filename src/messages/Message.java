@@ -29,9 +29,10 @@ import org.json.simple.parser.ParseException;
 public class Message {
 
 	/**
-	 * The four main message types
+	 * The four main message types with an additional TEST message type for testing purposes
 	 */
-	public enum MessageType {CONTROL, DATA, ERROR, ACK}
+	public enum MessageType {CONTROL, DATA, ERROR, ACK, TEST}
+	
 	public MessageHeader header;
 	public MessageBody body;
 
