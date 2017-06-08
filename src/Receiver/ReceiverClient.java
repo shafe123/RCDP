@@ -1,3 +1,26 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: ReceiverClient.java
+*
+* Description:
+* Facilitates the establishment of a connection from the receiver end
+* to the drone. The class implements run() a method in Runnable()
+* for concurrency.
+*
+* Requirements (Additional details can be found in the file below):
+* -SERVICE, CLIENT, CURRENT
+*
+*=================================================================================
+* */
+
 package Receiver;
 
 import java.io.BufferedReader;
@@ -41,6 +64,15 @@ public class ReceiverClient implements Runnable {
 	public String RandomNum;
 	public ReceiverDFA receiverDFA;
 
+	/**
+	 * Constructs a receiver provided a socket, ui, password, version, and a unique number to
+	 * simulate the connection with a drone entity.
+	 * @param socket of type Socket, that the receiver wishes to connect to. Default is port 8080
+	 * @param ui of type UIReceiver, the graphical interface of the receiver
+	 * @param password of type String, that represents the secure passphrase to connect to the drone
+	 * @param version of type String, the current version the receiver supports
+	 * @param randomNum of type String, which designates a unique identifier for the receiver
+	 */
 	public ReceiverClient(Socket socket, UIReceiver ui, String password,String version, String randomNum) {
 		echoSocket = socket;
 		UI = ui;
@@ -50,6 +82,9 @@ public class ReceiverClient implements Runnable {
 		receiverDFA = new ReceiverDFA(PASSWORD, VERSION, RandomNum);
 	}
 
+	/**
+	 * Various getter and setter methods by the receiver
+	 */
 	public String getPASSWORD() {
 		return PASSWORD;
 	}
@@ -91,7 +126,7 @@ public class ReceiverClient implements Runnable {
 	}
 
 	/**
-	 * client socket use for send command
+	 * Client socket use for sending commands to the drone
 	 */
 	public void run() {
 		MessageType MSGType;
@@ -324,8 +359,11 @@ public class ReceiverClient implements Runnable {
 		}
 	}
 
-
-
+	/**
+	 * Used to test the display of the message onto he drone
+	 * graphical user interface.
+	 * @param msg the message to be displayed on the interface of type Message
+	 */
 	public void testDisplay(Message msg) {
 		for (byte theByte : Message.toByteArray(msg)) {
 			UI.display(Integer.toHexString(theByte));
@@ -333,9 +371,12 @@ public class ReceiverClient implements Runnable {
 	}
 
 	/**
-	 * method send command
+	 * Method used to send a message commands
+	 * @param mSGType of type MessageType, the type of message being sent
+	 * @param commandbyte of type byte, the command to be executed by the drone
+	 * @param json of type JSONObject, which encodes the message parameters
+	 * @param dOut of type DataOutputStream, a stream to establish output to
 	 */
-
 	private void sendMSG(MessageType mSGType, byte commandbyte, JSONObject json, DataOutputStream dOut) {
 		try {
 			ControlMessage controlMessage = new ControlMessage(status, commandbyte, json);
@@ -347,6 +388,13 @@ public class ReceiverClient implements Runnable {
 		}
 		UI.display(command + " command sent");
 	}
+
+	/**
+	 * Method used to send a message commands
+	 * @param take of type Message, takes in a message object to be sent to the drone
+	 * @param dOut of type DataOutputStream, a stream to establish output to
+	 * @throws IOException
+	 */
 	private void sendMSG(Message take, DataOutputStream dOut) throws IOException {
 		// TODO Auto-generated method stub
 		dOut.writeInt(Message.toByteArray(take).length);

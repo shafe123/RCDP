@@ -1,3 +1,26 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: readACK.java
+*
+* Description:
+* This file is used to establish the initial acknowledgement between the receiver
+* and the drone and facilitate communications between the two by adhering to the
+* receiver DFA.
+*
+* Requirements (Additional details can be found in the file below):
+* -SERVICE, UI, CLIENT, CONCURRENT
+*
+*=================================================================================
+* */
+
 package Receiver;
 
 import java.io.DataInputStream;
@@ -18,7 +41,16 @@ public class readACK implements Runnable {
 	public String RandomNum;
 	public String PASSWORD;
 	public ReceiverDFA receiverDFA;
-	
+
+	/**
+	 * Constructs the initial read acknowledgment of the receiver provided
+	 * socket, ui, password, version, and rnadom number.
+ 	 * @param socket the socket used to connect of type socket
+	 * @param ui the receiver graphical user interface of type UIReceiver
+	 * @param password the passphrase to connect to the drone, of type String
+	 * @param version the version of the protocol the receiver currently has of type String
+	 * @param randomNum a randomly generated number to establish unique session
+	 */
 	public readACK(Socket socket,UIReceiver ui,String password,String version, String randomNum) {
 		UI = ui;
 		echoSocket = socket;
@@ -26,10 +58,10 @@ public class readACK implements Runnable {
 		VERSION = version;
 		RandomNum = randomNum;
 		receiverDFA = new ReceiverDFA(PASSWORD, VERSION, RandomNum);
-
 	}
+
 /**
- * use for read ACK
+ * Use for read ACK
  */
 	public void run() {
 
@@ -45,18 +77,23 @@ public class readACK implements Runnable {
 					msg = Message.fromByteArray(messagebyte);
 					UI.display("Received Message Detail: \n" + msg.toString());
 //					testDisplay(msg);
-					// if isAuthenticate, the message is ack or err
+
+					/**
+					 * If isAuthenticate, the message is ack or err
+					 */
 					if (isAuthenticate){
 						
 					} else{
-						// if not isAuthenticate, the msg is drone hello
+
+						/**
+						 * If not isAuthenticate, the msg is drone hello
+						 */
 						UI.display("Drone Hello Received");
 						DFAResponse receiverResponse = receiverDFA.authenticate(msg);
+						// if error
 						if (receiverResponse.isErrorFlag()){
-							// if error
 							UI.display(receiverResponse.getErrorMessage());
-						} else{
-							// if not error return reponse drone hello
+						} else{ // if no error return repose drone hello
 							UI.display("responseRDroneHello sent");
 							Message responseRDroneHello = receiverResponse.getMessage();
 							UI.commandQueue.offer("RDH");
@@ -65,11 +102,7 @@ public class readACK implements Runnable {
 							isAuthenticate = true;
 						}
 					}
-					
-
-
 				}
-
 			}
 			}
 		} catch (Exception e) {
@@ -77,6 +110,9 @@ public class readACK implements Runnable {
 		}
 	}
 
+	/**
+	 * @param msg the message to display to the receiver GUI
+	 */
 	public void testDisplay(Message msg) {
 		for (byte theByte : Message.toByteArray(msg)) {
 			UI.display(Integer.toHexString(theByte));

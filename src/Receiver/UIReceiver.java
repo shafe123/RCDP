@@ -1,3 +1,29 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: UIReceiver.java
+*
+* Description:
+* This file contains the receiver interface functionality and displays the
+* interaction between the drone. The this behavior
+* is simulated as the interface provides various buttons the represent
+* the operations of the receiver. The messages will be visible
+* in a scrolling text box showing the user the current message execution
+* and provide any feed back as necessary.
+*
+* Requirements (Additional details can be found in the file below):
+* - UI
+*
+*=================================================================================
+* */
+
 package Receiver;
 
 import java.awt.*;
