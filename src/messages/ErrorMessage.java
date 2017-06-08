@@ -8,7 +8,7 @@
 * - Brent Varga
 * - Xiaxin Xin
 * --------------------------------------------------------------------------------
-* File name: DataMessage.java
+* File name: ErrorMessage.java
 *
 * Description:
 * Defines the protocol various error codes. All message adhere to the documentation

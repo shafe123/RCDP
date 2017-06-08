@@ -322,7 +322,7 @@ public class UIDrone {
 
 		mainFrame.setVisible(true);
 	}
-	// end of UI
+	// end of GUI section
 
 	/**
 	 * Displays the method for init UI

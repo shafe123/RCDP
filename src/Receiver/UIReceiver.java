@@ -80,9 +80,11 @@ public class UIReceiver {
 		swingControlDemo = new UIReceiver();
 		swingControlDemo.showEventDemo();
 	}
-/**
- * UI code
- */
+
+	/**
+	 * The graphic user interface section that initiates the various
+	 * swing components and objects
+	 */
 	private void prepareGUI() {
 		mainFrame = new JFrame("RCDP receiver");
 		mainFrame.setSize(600, 600);
@@ -108,6 +110,9 @@ public class UIReceiver {
 
 	}
 
+	/**
+	 * Creations of button components and labels
+	 */
 	private void showEventDemo() {
 
 		JLabel headerLable = new JLabel("Remote control Drone Protocol: Receiver", JLabel.CENTER);
@@ -386,24 +391,25 @@ public class UIReceiver {
 		
 		mainFrame.setVisible(true);
 	}
+	// end of GUI section
 
-	// Anything above this line are for UI
-
-	// display on UI
+	/**
+	 * Displaies the receiver GUI
+	 * @param logstring a log the represents the various interactions between the receiver
+	 *                  that are displayed to the GUI. Is a type of String
+	 */
 	public void display(String logstring) {
 		LogStringCount++;
 		log.append(LogStringCount + ":" + logstring + "\n");
 		statusLabel.setText(log.toString());
 	}
 	
-	public void inputCommand(){
-		
-	}
+	public void inputCommand(){}
 
 	/**
-	 * 
-	 * after click the button, add command to a Queue, wait for client to read and send
-	 *
+	 * The button clicker listener operates in a way that, if a button is selected, add
+	 * a command to the Queue, and wait for the receiver (i.e. client) to read and
+	 * send its messages
 	 */
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -436,16 +442,12 @@ public class UIReceiver {
 					} catch (NumberFormatException | IOException e1) {
 						display(e1.getMessage());
 					}
-					
 				}
-
-								
 				break;
 			case "TurnOff":
 				System.exit(0);
 			default:
-				
-				commandQueue.offer(command);	
+				commandQueue.offer(command);
 				break;
 			}
 		}

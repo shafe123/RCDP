@@ -148,6 +148,9 @@ public class ReceiverClient implements Runnable {
 					UI.display(e.getMessage());
 				}
 
+				/**
+				 * Determines what command was sent based on the message type
+				 */
 				switch (command) {
 				case "TurnOn":
 					MSGType = MessageType.CONTROL;
