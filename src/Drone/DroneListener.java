@@ -10,8 +10,10 @@ import DFA.DFAState;
 import DFA.DroneDFA;
 import Messages.AckMessage;
 import Messages.ControlMessage;
+import Messages.ErrorMessage;
 import Messages.Message;
 import Messages.ControlMessage.ControlType;
+import Messages.ErrorMessage.ErrorType;
 import Messages.Message.MessageType;
 
 public class DroneListener implements Runnable{
@@ -62,6 +64,10 @@ public class DroneListener implements Runnable{
 				msg = Message.fromByteArray(messagebyte);
 				UI.display("Received Message Detail: \n" + msg.toString());
 				if (isAuthenticate){
+					ControlMessage controlMessage1 = (ControlMessage) msg.body;
+					if(controlMessage1.type == ControlType.GROUNDED && controlMessage1.command == 0x00){
+						returnmsg = new Message(MessageType.ERROR, 0, new ErrorMessage(ErrorType.Connect_Deny));
+					}else{
 					
 					ackmessageId = msg.header.messageID;
 					nextState = DFAState.getNextState(msg, currentState);
@@ -69,6 +75,7 @@ public class DroneListener implements Runnable{
 						returnmsg = nextState.getMessage();
 						UI.display(nextState.getErrorMessage());
 						UI.display("error sent");
+						
 
 					} else{
 						AckMessage ackMessage = new AckMessage(ackmessageId);
@@ -78,7 +85,7 @@ public class DroneListener implements Runnable{
 						returnmsg = new Message(MessageType.ACK,messageID,ackMessage);
 						messageID ++;
 					}
-					
+					}
 				}else{
 
 					// if not authenticated, the first message must be receiver hello
