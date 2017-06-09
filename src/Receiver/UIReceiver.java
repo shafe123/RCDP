@@ -81,7 +81,7 @@ public class UIReceiver {
 	 */
 	private void prepareGUI() {
 		mainFrame = new JFrame("RCDP receiver");
-		mainFrame.setSize(600, 600);
+		mainFrame.setSize(800, 600);
 
 		mainFrame.setLayout(new GridLayout(2, 1));
 
@@ -110,16 +110,16 @@ public class UIReceiver {
 	private void showEventDemo() {
 
 		JLabel headerLable = new JLabel("Remote control Drone Protocol: Receiver", JLabel.CENTER);
-		JButton turnOnButton = new JButton("TurnOn");
-		JButton turnOffButton = new JButton("TurnOff");
+		JButton turnOnButton = new JButton("On");
+		JButton turnOffButton = new JButton("Off");
 		JButton upButton = new JButton("Up");
 		JButton downButton = new JButton("Down");
-		JButton rollLeftButton = new JButton("TurnLeft");
-		JButton rollRightButton = new JButton("TurnRight");
-		JButton leftButton = new JButton("<");
-		JButton rightButton = new JButton(">");
-		JButton forwardButton = new JButton("^");
-		JButton backwardButton = new JButton("v");
+		JButton rollLeftButton = new JButton("Turn Left");
+		JButton rollRightButton = new JButton("Turn Right");
+		JButton leftButton = new JButton("Move Left");
+		JButton rightButton = new JButton("Move Right");
+		JButton forwardButton = new JButton("Forward");
+		JButton backwardButton = new JButton("Backward");
 		JButton landButton = new JButton("Land");
 		JButton autoButton = new JButton("Auto");
 		JButton propellerButton = new JButton("Propeller");

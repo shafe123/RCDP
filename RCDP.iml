@@ -23,5 +23,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="junit:junit:4.0" level="project" />
+    <orderEntry type="library" name="com.bluecatcode.hamcrest:hamcrest-1.3-extended:1.1.0" level="project" />
   </component>
 </module>
