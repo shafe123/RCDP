@@ -30,7 +30,7 @@ public class DroneListener implements Runnable {
 
 	public int ackmessageId;
 	public Message returnmsg;
-	public boolean isAuthenticate = false;
+	public static boolean isAuthenticate = false;
 	public int messageID = 100;
 	public String command;
 	public Socket clientSocket;
