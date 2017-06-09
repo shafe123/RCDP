@@ -1,3 +1,28 @@
+/*================================================================================
+* CS544 - Computer Networks
+* Drexel University, Spring 2017
+* Protocol Implementation: Remote Control Drone Protocol
+* Team 4:
+* - Ajinkya Dhage
+* - Ethan Shafer
+* - Brent Varga
+* - Xiaxin Xin
+* --------------------------------------------------------------------------------
+* File name: DroneListener.java
+*
+* Description:
+* Used for establishing multiple connections on the drone.
+* When multiple receivers try to connect the first valid authenticate connection
+* will gain control of the drone while the subsequent connections will not have
+* control but have limited control.
+*
+* Requirements (Additional details can be found in the file below):
+* - UI
+* - CONCURRENT
+*
+*=================================================================================
+* */
+
 package Drone;
 
 import java.io.DataInputStream;
@@ -35,6 +60,15 @@ public class DroneListener implements Runnable {
 	public String command;
 	public Socket clientSocket;
 
+	/**
+	 * Constructs the drone listener in order to find any incoming connections that
+	 * match the following parameters.
+	 * @param p_number is the port number to establish connection to. This is of type String
+	 * @param passward a unique passphrase used to establish authentication and is of type String
+	 * @param drone_id uniquely identifies the drone with any incoming connections
+	 * @param ui is the drone graphical user interface of type UIDrone
+	 * @param clientsocket of type Socket
+	 */
 	public DroneListener(String p_number, String passward, String drone_id, UIDrone ui, Socket clientsocket) {
 		PORT_NUMBER = p_number;
 		PASSWORD = passward;
@@ -47,6 +81,10 @@ public class DroneListener implements Runnable {
 
 	}
 
+	/**
+	 * Implements runnable which assists in the threading process fulfilling hte
+	 * concurrent requirement
+	 */
 	public void run() {
 		try {
 			DataOutputStream dOut = new DataOutputStream(clientSocket.getOutputStream());
@@ -56,9 +94,11 @@ public class DroneListener implements Runnable {
 			while ((length = dIn.readInt()) != 0) {
 				if (length > 0) {
 					byte[] messagebyte = new byte[length];
-					dIn.readFully(messagebyte, 0, messagebyte.length); // read
-																		// the
-																		// message
+
+					/**
+					 * Message is read in
+					 */
+					dIn.readFully(messagebyte, 0, messagebyte.length);
 					Message msg;
 
 					try {
@@ -90,11 +130,15 @@ public class DroneListener implements Runnable {
 							}
 						} else {
 
-							// if not authenticated, the first message must be
-							// receiver hello
+							/**
+							 * If not authenticated, the first message must be
+							 * receiver hello
+							 */
 							droneResponse = droneDFA.authenticate(msg);
 
-							// if error
+							/**
+							 * If an error occurs
+							 */
 							if (droneResponse.isErrorFlag()) {
 
 								returnmsg = droneResponse.getMessage();
@@ -102,19 +146,24 @@ public class DroneListener implements Runnable {
 								UI.display("error sent");
 							} else {
 
-								// if not error
-
+								/**
+								 * If no error occurs
+								 */
 								ControlMessage controlMessage = (ControlMessage) msg.body;
 
-								// if receievd message is receiver hello
+								/**
+								 * If the received message is receiver hello
+								 */
 								if (controlMessage.command == 0x01) {
 									UI.display("send back Drone Hello");
 									returnmsg = droneResponse.getMessage();
 									returnmsg.header.messageID = messageID;
 									messageID++;
 								} else {
-									// if received message is response drone
-									// hello
+
+									/**
+									 * If received message is response drone hello
+									 */
 									UI.display("send ack for response drone hello");
 									AckMessage ackMessage = new AckMessage(ackmessageId);
 									returnmsg = new Message(MessageType.ACK, messageID, ackMessage);
