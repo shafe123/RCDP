@@ -102,11 +102,11 @@ public class UIDrone {
 		JButton turnOffButton = new JButton("TurnOff");
 		
 		
-		JLabel pw = new JLabel("set password for Drone");
+		JLabel pw = new JLabel("    password for Drone");
 		Jpassword= new JPasswordField(10);
 //		Jpassword.setText("secret");
 		
-		JLabel d_id = new JLabel("set Drone ID");
+		JLabel d_id = new JLabel("    Drone ID");
 		
 		JdroneId = new JTextField(10); 
 		
