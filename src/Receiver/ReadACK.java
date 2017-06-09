@@ -83,7 +83,7 @@ public class ReadACK implements Runnable {
 					msg = Message.fromByteArray(messagebyte);
 			// error case lost signal error, comment next line and send any 8 commands
 					UI.timeoutQueue.poll();
-					UI.display("Received Message Detail: \n" + msg.toString());
+					UI.display("Received Message Detail: \n" + msg.toString() + "\n");
 //					testDisplay(msg);
 
 					/**

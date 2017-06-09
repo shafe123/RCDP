@@ -29,6 +29,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Random;
 
 import DFA.DFAResponse;
 import DFA.DFAState;
@@ -75,7 +76,7 @@ public class DroneListener implements Runnable {
 		DRONE_ID = drone_id;
 		UI = ui;
 		VERSION = "1.2";
-		RandomNum = "234";
+		RandomNum = getRandomNumber();
 		clientSocket = clientsocket;
 		droneDFA = new DroneDFA(PASSWORD, VERSION, RandomNum, DRONE_ID);
 
@@ -103,7 +104,7 @@ public class DroneListener implements Runnable {
 
 					try {
 						msg = Message.fromByteArray(messagebyte);
-						UI.display("Received Message Detail: \n" + msg.toString());
+						UI.display("Received Message from:" +clientSocket.getRemoteSocketAddress().toString()+ " Detail: \n" + msg.toString() + "\n");
 						if (isAuthenticate) {
 							// if isAuthenticate and a new receiver want to
 							// connect, send connect deny error 
@@ -190,5 +191,15 @@ public class DroneListener implements Runnable {
 			UI.display(e.getMessage());
 		}
 
+	}
+	
+	/**
+	 * Method used to generate a random number
+	 */
+	public static String getRandomNumber()
+	{
+		Random rand = new Random();
+		int  n = rand.nextInt(1000) + 1;
+		return ""+n;	
 	}
 }

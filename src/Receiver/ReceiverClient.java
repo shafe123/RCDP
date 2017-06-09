@@ -27,6 +27,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import org.json.simple.JSONObject;
 
@@ -544,7 +545,11 @@ public class ReceiverClient implements Runnable {
 	 */
 	public Message getReturnMsg(MessageType mSGType, byte commandbyte, JSONObject json) throws Exception{
 		ControlMessage controlMessage = new ControlMessage(currentState, commandbyte, json);
-		Message mup = new Message(mSGType, 3, controlMessage);
+		Message mup = new Message(mSGType, msgID, controlMessage);
+		msgID ++;
+		if (msgID == 1){
+			msgID++;
+		}
 		return mup;
 	}
 
@@ -561,5 +566,15 @@ public class ReceiverClient implements Runnable {
 		dOut.writeInt(Message.toByteArray(msg).length);
 		dOut.write(Message.toByteArray(msg));
 		
+	}
+	
+	/**
+	 * Method used to generate a random number
+	 */
+	public static String getRandomNumber()
+	{
+		Random rand = new Random();
+		int  n = rand.nextInt(1000) + 1;
+		return ""+n;	
 	}
 }

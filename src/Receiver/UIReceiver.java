@@ -30,6 +30,7 @@ import java.awt.*;
 
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,7 @@ public class UIReceiver {
 	private JPasswordField passwordField;
 	private JTextField hostnameField;
 	public String VERSION = "1.1";
-	public String RandomNum = "234";
+	public String RandomNum = getRandomNumber();
 
 	public String PORTNUMBER = "8080";
 //	public String HOSTNAME = "127.0.0.1";
@@ -490,5 +491,14 @@ public class UIReceiver {
 				break;
 			}
 		}
+	}
+	/**
+	 * Method used to generate a random number
+	 */
+	public static String getRandomNumber()
+	{
+		Random rand = new Random();
+		int  n = rand.nextInt(1000) + 1;
+		return ""+n;	
 	}
 }

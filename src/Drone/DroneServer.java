@@ -28,6 +28,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 import DFA.DFAResponse;
 import DFA.DFAState;
@@ -75,8 +76,6 @@ public class DroneServer implements Runnable {
 		DRONE_ID = drone_id;
 		UI = ui;
 		VERSION = "1.2";
-		RandomNum = "234";
-		droneDFA = new DroneDFA(PASSWORD,VERSION,RandomNum,DRONE_ID);
 
 	}
 	
@@ -132,4 +131,6 @@ public class DroneServer implements Runnable {
 			UI.display(e.getMessage());
 		}
 	}
+	
+
 }

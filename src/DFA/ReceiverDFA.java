@@ -128,7 +128,7 @@ public class ReceiverDFA extends DFA {
 						controlMessage.command = 0x02;
 						
 						ControlMessage responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
-						Message responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);
+						Message responseMessage = new Message(MessageType.CONTROL, 1, responseControlMessage);
 						response = new DFAResponse(responseMessage, false, null);
 						return response;
 			default:
