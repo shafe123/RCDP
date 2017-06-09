@@ -84,6 +84,9 @@ public class DroneDFA extends DFA {
 							response = new DFAResponse(errorMessage, true, "password field not present in message params");
 							return response;
 						}
+						//Add version from drone
+						params.put("drone_id", droneID);
+						
 						//Authenticate Password
 						String receiverPassword = (String) params.get("password");
 						String dronePassword = password;
@@ -135,6 +138,9 @@ public class DroneDFA extends DFA {
 						ControlMessage responseControlMessage = new ControlMessage(controlMessage.type, controlMessage.command, params);
 						Message responseMessage = new Message(MessageType.CONTROL, 3, responseControlMessage);
 						response = new DFAResponse(responseMessage, false, null);
+						
+						
+						
 						return response;
 			case 0x02:
 						//Verify Version

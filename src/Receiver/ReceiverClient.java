@@ -48,7 +48,7 @@ public class ReceiverClient implements Runnable {
 	public String command;
 	public Message MSG;
 	public Integer msgID = 0;
-	private Integer droneID = 0;
+	private String droneID = "";
 	public ControlType currentState = ControlType.GROUNDED;
 
 	public boolean automode = false;
@@ -103,11 +103,11 @@ public class ReceiverClient implements Runnable {
 		this.msgID = msgID;
 	}
 
-	public Integer getDroneID() {
+	public String getDroneID() {
 		return droneID;
 	}
 
-	public void setDroneID(Integer droneID) {
+	public void setDroneID(String droneID) {
 		this.droneID = droneID;
 	}
 
@@ -179,6 +179,10 @@ public class ReceiverClient implements Runnable {
 				case "RDH":
 					try {
 						Message RDH = UI.messageQueue.take();
+						ControlMessage controlMessage = (ControlMessage) RDH.body;
+						JSONObject params = controlMessage.params;
+						droneID = (String) params.get("drone_id");
+						
 						sendMSG(RDH, dOut);
 						currentState = ControlType.PREFLIGHT;
 						turnon = true;
