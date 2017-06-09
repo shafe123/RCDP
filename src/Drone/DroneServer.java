@@ -75,7 +75,6 @@ public class DroneServer implements Runnable {
 		PASSWORD = passward;
 		DRONE_ID = drone_id;
 		UI = ui;
-		VERSION = "1.2";
 
 	}
 	
