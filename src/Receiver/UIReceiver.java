@@ -48,12 +48,13 @@ public class UIReceiver {
 	private int LogStringCount = 0;
 	private JScrollPane sp;
 	private JPasswordField passwordField;
-	
+	private JTextField hostnameField;
 	public String VERSION = "1.1";
 	public String RandomNum = "234";
 
 	public String PORTNUMBER = "8080";
-	public String HOSTNAME = "127.0.0.1";
+//	public String HOSTNAME = "127.0.0.1";
+	public String HOSTNAME;
 	public static UIReceiver swingControlDemo;
 	public Socket echoSocket;
 	private boolean powerOn = false;
@@ -127,6 +128,9 @@ public class UIReceiver {
 		
 		JLabel pw = new JLabel("Password");
 		passwordField = new JPasswordField(10);
+		
+		JLabel hostname = new JLabel("Host IP");
+		hostnameField = new JTextField("127.0.0.1");
 
 		turnOnButton.setActionCommand("TurnOn");
 		turnOffButton.setActionCommand("TurnOff");
@@ -164,6 +168,9 @@ public class UIReceiver {
 
 		controlPanel.add(pw);
 		controlPanel.add(passwordField);
+		
+		controlPanel.add(hostname);
+		controlPanel.add(hostnameField);
 		
 		controlPanel.add(headerLable);
 		controlPanel.add(turnOnButton);
@@ -228,7 +235,7 @@ public class UIReceiver {
 		gbl.setConstraints(pw, gbs);
 		
 		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 2;
+		gbs.gridwidth = 1;
 		gbs.gridheight = 1;
 		gbs.insets = new Insets(1, 0, 1, 0);
 		gbs.weightx = 1;
@@ -238,6 +245,30 @@ public class UIReceiver {
 		gbs.ipadx = 100;
 		gbs.ipady = 10;
 		gbl.setConstraints(passwordField, gbs);
+		
+		gbs.fill = GridBagConstraints.NONE;
+		gbs.gridwidth = 1;
+		gbs.gridheight = 1;
+		gbs.insets = new Insets(1, 0, 1, 0);
+		gbs.weightx = 1;
+		gbs.weighty = 1;
+		gbs.gridx = 6;
+		gbs.gridy = 1;
+		gbs.ipadx = 100;
+		gbs.ipady = 10;
+		gbl.setConstraints(hostname, gbs);
+		
+		gbs.fill = GridBagConstraints.NONE;
+		gbs.gridwidth = 1;
+		gbs.gridheight = 1;
+		gbs.insets = new Insets(1, 0, 1, 0);
+		gbs.weightx = 1;
+		gbs.weighty = 1;
+		gbs.gridx = 7;
+		gbs.gridy = 1;
+		gbs.ipadx = 100;
+		gbs.ipady = 10;
+		gbl.setConstraints(hostnameField, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;
@@ -422,6 +453,9 @@ public class UIReceiver {
 		
 					char[] cs = passwordField.getPassword();
 					String PASSWORD = new String(cs);
+					
+					HOSTNAME = hostnameField.getText();
+					
 					try {
 						echoSocket = new Socket(HOSTNAME, Integer.parseInt(PORTNUMBER));
 						receiverClient = new ReceiverClient(echoSocket, swingControlDemo,PASSWORD,VERSION,RandomNum);
