@@ -522,8 +522,10 @@ public class ReceiverClient implements Runnable {
 	public void changeState(Message message){
 		try {
 			DFAResponse nextState = DFAState.getNextState(message, currentState);
-			ControlMessage controlMessage2 = (ControlMessage) nextState.getMessage().body;
-			currentState = controlMessage2.type;
+			if(nextState.getMessage().body instanceof ControlMessage){
+				ControlMessage controlMessage2 = (ControlMessage) nextState.getMessage().body;
+				currentState = controlMessage2.type;
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
