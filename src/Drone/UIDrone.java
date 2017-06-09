@@ -96,16 +96,16 @@ public class UIDrone {
 	 */
 	private void showEventDemo() {
 
-		JLabel headerLable = new JLabel("Remote control Drone Protocol: Drone", JLabel.CENTER);
+		JLabel headerLable = new JLabel("Remote Control Drone Protocol: Drone", JLabel.CENTER);
 		JLabel errorLable = new JLabel("Error simulate", JLabel.CENTER);
-		JButton turnOnButton = new JButton("TurnOn");
-		JButton turnOffButton = new JButton("TurnOff");
+		JButton turnOnButton = new JButton("On");
+		JButton turnOffButton = new JButton("Off");
 		
 		
-		JLabel pw = new JLabel("    password for Drone");
+		JLabel pw = new JLabel("    Password for Drone");
 		Jpassword= new JPasswordField(10);
 //		Jpassword.setText("secret");
-		
+
 		JLabel d_id = new JLabel("    Drone ID");
 		
 		JdroneId = new JTextField(10); 

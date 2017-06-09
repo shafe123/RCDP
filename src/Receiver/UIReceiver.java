@@ -111,7 +111,7 @@ public class UIReceiver {
 	 */
 	private void showEventDemo() {
 
-		JLabel headerLable = new JLabel("Remote control Drone Protocol: Receiver", JLabel.CENTER);
+		JLabel headerLable = new JLabel("Remote Control Drone Protocol: Receiver", JLabel.CENTER);
 		JButton turnOnButton = new JButton("On");
 		JButton turnOffButton = new JButton("Off");
 		JButton upButton = new JButton("Up");
