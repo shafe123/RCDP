@@ -16,7 +16,7 @@ import Messages.ControlMessage.ControlType;
 import Messages.ErrorMessage.ErrorType;
 import Messages.Message.MessageType;
 
-public class DroneListener implements Runnable{
+public class DroneListener implements Runnable {
 	public String PORT_NUMBER;
 	public String PASSWORD;
 	public String DRONE_ID;
@@ -27,15 +27,15 @@ public class DroneListener implements Runnable{
 	public DFAResponse droneResponse;
 	public DFAResponse nextState;
 	public ControlType currentState = ControlType.GROUNDED;
-	
+
 	public int ackmessageId;
 	public Message returnmsg;
 	public boolean isAuthenticate = false;
 	public int messageID = 100;
 	public String command;
 	public Socket clientSocket;
-	
-	public DroneListener(String p_number, String passward, String drone_id, UIDrone ui, Socket clientsocket){
+
+	public DroneListener(String p_number, String passward, String drone_id, UIDrone ui, Socket clientsocket) {
 		PORT_NUMBER = p_number;
 		PASSWORD = passward;
 		DRONE_ID = drone_id;
@@ -43,99 +43,103 @@ public class DroneListener implements Runnable{
 		VERSION = "1.2";
 		RandomNum = "234";
 		clientSocket = clientsocket;
-		droneDFA = new DroneDFA(PASSWORD,VERSION,RandomNum,DRONE_ID);
-		
-		
+		droneDFA = new DroneDFA(PASSWORD, VERSION, RandomNum, DRONE_ID);
+
 	}
-	
+
 	public void run() {
-		try{
-		DataOutputStream dOut = new DataOutputStream(clientSocket.getOutputStream());
-		DataInputStream dIn = new DataInputStream(clientSocket.getInputStream()); 
-	int length;
+		try {
+			DataOutputStream dOut = new DataOutputStream(clientSocket.getOutputStream());
+			DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());
+			int length;
 
-	while ((length = dIn.readInt()) != 0) {
-		if (length > 0) {
-			byte[] messagebyte = new byte[length];
-			dIn.readFully(messagebyte, 0, messagebyte.length); // read the message 
-			Message msg;
-			
-			try {
-				msg = Message.fromByteArray(messagebyte);
-				UI.display("Received Message Detail: \n" + msg.toString());
-				if (isAuthenticate){
-					ControlMessage controlMessage1 = (ControlMessage) msg.body;
-					if(controlMessage1.type == ControlType.GROUNDED && controlMessage1.command == 0x00){
-						returnmsg = new Message(MessageType.ERROR, 0, new ErrorMessage(ErrorType.Connect_Deny));
-					}else{
-					
-					ackmessageId = msg.header.messageID;
-					nextState = DFAState.getNextState(msg, currentState);
-					if (nextState.isErrorFlag()){
-						returnmsg = nextState.getMessage();
-						UI.display(nextState.getErrorMessage());
-						UI.display("error sent");
-						
+			while ((length = dIn.readInt()) != 0) {
+				if (length > 0) {
+					byte[] messagebyte = new byte[length];
+					dIn.readFully(messagebyte, 0, messagebyte.length); // read
+																		// the
+																		// message
+					Message msg;
 
-					} else{
-						AckMessage ackMessage = new AckMessage(ackmessageId);
-						
-						ControlMessage controlMessage = (ControlMessage) nextState.getMessage().body;
-						currentState = controlMessage.type;
-						returnmsg = new Message(MessageType.ACK,messageID,ackMessage);
-						messageID ++;
-					}
-					}
-				}else{
+					try {
+						msg = Message.fromByteArray(messagebyte);
+						UI.display("Received Message Detail: \n" + msg.toString());
+						if (isAuthenticate) {
+							// if isAuthenticate and a new receiver want to
+							// connect, send connect deny error 
+							ControlMessage controlMessage1 = (ControlMessage) msg.body;
+							if (controlMessage1.type == ControlType.GROUNDED && controlMessage1.command == 0x00) {
+								returnmsg = new Message(MessageType.ERROR, 0, new ErrorMessage(ErrorType.Connect_Deny));
+							} else {
 
-					// if not authenticated, the first message must be receiver hello
-					droneResponse = droneDFA.authenticate(msg);
+								ackmessageId = msg.header.messageID;
+								nextState = DFAState.getNextState(msg, currentState);
+								if (nextState.isErrorFlag()) {
+									returnmsg = nextState.getMessage();
+									UI.display(nextState.getErrorMessage());
+									UI.display("error sent");
 
-					// if error
-					if (droneResponse.isErrorFlag()){
+								} else {
+									AckMessage ackMessage = new AckMessage(ackmessageId);
 
-						returnmsg = droneResponse.getMessage();
-						UI.display(droneResponse.getErrorMessage());
-						UI.display("error sent");
-					}else{
+									ControlMessage controlMessage = (ControlMessage) nextState.getMessage().body;
+									currentState = controlMessage.type;
+									returnmsg = new Message(MessageType.ACK, messageID, ackMessage);
+									messageID++;
+								}
+							}
+						} else {
 
-						// if not error
-						
-						ControlMessage controlMessage = (ControlMessage) msg.body;
-					
-						// if receievd message is receiver hello
-						if (controlMessage.command == 0x01){
-							UI.display("send back Drone Hello");
-							returnmsg = droneResponse.getMessage();
-							returnmsg.header.messageID = messageID;
-							messageID ++;
-						}else{
-							// if received message is response drone hello
-							UI.display("send ack for response drone hello");
-							AckMessage ackMessage = new AckMessage(ackmessageId);
-							returnmsg = new Message(MessageType.ACK,messageID,ackMessage);
-							messageID ++;
+							// if not authenticated, the first message must be
+							// receiver hello
+							droneResponse = droneDFA.authenticate(msg);
 
-							currentState = ControlType.PREFLIGHT;
+							// if error
+							if (droneResponse.isErrorFlag()) {
 
-							isAuthenticate = true;
-							UI.display("Authenticate Done");
+								returnmsg = droneResponse.getMessage();
+								UI.display(droneResponse.getErrorMessage());
+								UI.display("error sent");
+							} else {
+
+								// if not error
+
+								ControlMessage controlMessage = (ControlMessage) msg.body;
+
+								// if receievd message is receiver hello
+								if (controlMessage.command == 0x01) {
+									UI.display("send back Drone Hello");
+									returnmsg = droneResponse.getMessage();
+									returnmsg.header.messageID = messageID;
+									messageID++;
+								} else {
+									// if received message is response drone
+									// hello
+									UI.display("send ack for response drone hello");
+									AckMessage ackMessage = new AckMessage(ackmessageId);
+									returnmsg = new Message(MessageType.ACK, messageID, ackMessage);
+									messageID++;
+
+									currentState = ControlType.PREFLIGHT;
+
+									isAuthenticate = true;
+									UI.display("Authenticate Done");
+								}
+							}
 						}
+						UI.currentState.setText("" + currentState);
+						dOut.writeInt(Message.toByteArray(returnmsg).length);
+						dOut.write(Message.toByteArray(returnmsg));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						UI.display(e.getMessage());
 					}
 				}
-				UI.currentState.setText("" + currentState);
-				dOut.writeInt(Message.toByteArray(returnmsg).length);
-				dOut.write(Message.toByteArray(returnmsg));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				UI.display(e.getMessage());
 			}
-		}
-	}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 			UI.display(e.getMessage());
 		}
-		
+
 	}
 }
