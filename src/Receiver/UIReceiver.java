@@ -50,7 +50,7 @@ public class UIReceiver {
 	private JScrollPane sp;
 	private JPasswordField passwordField;
 	private JTextField hostnameField;
-	public String VERSION = "1.1";
+	public String VERSION = "1.0";
 	public String RandomNum = getRandomNumber();
 
 	public String PORTNUMBER = "8080";
