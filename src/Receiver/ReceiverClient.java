@@ -164,6 +164,8 @@ public class ReceiverClient implements Runnable {
 					json = new JSONObject();
 					json.put("version", VERSION);
 					json.put("random number A", RandomNum);
+					char[] cs = UI.passwordField.getPassword();
+					PASSWORD = new String(cs);
 					json.put("password", PASSWORD);
 					
 					try {

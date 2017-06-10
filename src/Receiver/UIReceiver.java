@@ -48,7 +48,7 @@ public class UIReceiver {
 	private StringBuffer log = new StringBuffer();
 	private int LogStringCount = 0;
 	private JScrollPane sp;
-	private JPasswordField passwordField;
+	public JPasswordField passwordField;
 	private JTextField hostnameField;
 	public String VERSION = "1.1";
 	public String RandomNum = getRandomNumber();
