@@ -30,6 +30,7 @@ import org.hamcrest.core.IsInstanceOf;
 
 import DFA.DFAResponse;
 import DFA.ReceiverDFA;
+import Messages.ControlMessage;
 import Messages.Message;
 
 public class ReadACK implements Runnable {
@@ -42,6 +43,7 @@ public class ReadACK implements Runnable {
 	public String RandomNum;
 	public String PASSWORD;
 	public ReceiverDFA receiverDFA;
+	public boolean running = true;
 
 	/**
 	 * Constructs the initial read acknowledgment of the receiver provided
@@ -69,7 +71,7 @@ public class ReadACK implements Runnable {
 		int length;
 		try {
 			dIn = new DataInputStream(echoSocket.getInputStream());
-			while(true){
+			while(running){
 			if (UI.timeoutQueue.size() > 6){
 				UI.display("LOST SIGNAL!!!!!!");
 			} else if (UI.timeoutQueue.size() > 3){
@@ -97,7 +99,9 @@ public class ReadACK implements Runnable {
 						 * If not isAuthenticate, the msg is drone hello
 						 */
 						UI.display("Drone Hello Received");
-						DFAResponse receiverResponse = receiverDFA.authenticate(msg);
+						if(msg.body instanceof ControlMessage){
+							DFAResponse receiverResponse = receiverDFA.authenticate(msg);
+						
 						// if error
 						if (receiverResponse.isErrorFlag()){
 							UI.display(receiverResponse.getErrorMessage());
@@ -110,7 +114,11 @@ public class ReadACK implements Runnable {
 
 							UI.messageQueue.offer(responseRDroneHello);
 							isAuthenticate = true;
+						}}else{
+							UI.commandQueue.offer("Close");
+							running = false;
 						}
+						
 					}
 				}
 			}

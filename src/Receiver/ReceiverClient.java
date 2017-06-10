@@ -64,6 +64,7 @@ public class ReceiverClient implements Runnable {
 	public String VERSION;
 	public String RandomNum;
 	public ReceiverDFA receiverDFA;
+	public boolean running = true;
 
 	/**
 	 * Constructs a receiver provided a socket, ui, password, version, and a unique number to
@@ -140,7 +141,7 @@ public class ReceiverClient implements Runnable {
 
 		) {
 
-			while (true) {
+			while (running) {
 
 				try {
 					while ((command = UI.commandQueue.take()) == null) {
@@ -193,6 +194,9 @@ public class ReceiverClient implements Runnable {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					break;
+				case "Close":
+					running = false;
 					break;
 
 				case "Up":
