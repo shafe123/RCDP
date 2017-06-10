@@ -117,8 +117,15 @@ public class DroneDFA extends DFA {
 						//set minimum of receiverVersion and droneVersion as final version.
 						double receiverVersion = Double.parseDouble(String.valueOf(params.get("version")));
 						double droneVersion = Double.parseDouble(version);
-						String version = String.valueOf(receiverVersion < droneVersion ? receiverVersion : droneVersion);
-						params.put("version", version);
+						if(receiverVersion > droneVersion){
+							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
+							response = new DFAResponse(errorMessage, true, "Receiver is at higher version than drone");
+							return response;
+						}
+						else {
+							this.version = String.valueOf(receiverVersion);
+							params.put("version", this.version);
+						}
 						
 						if(!params.containsKey("random number A")){//Check if random number from receiver is present
 							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.INVALID_RANDOM_NUMBER));
@@ -150,14 +157,14 @@ public class DroneDFA extends DFA {
 							return response;
 						}
 						
-						version = String.valueOf(params.get("version"));
-						if(Utility.isEmpty(version)){
+						String currentVersion = String.valueOf(params.get("version"));
+						if(Utility.isEmpty(currentVersion)){
 							errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
 							response = new DFAResponse(errorMessage, true, "Version is null or empty");
 							return response;
 						}
 						
-					    if(!version.equals(version)){
+					    if(!currentVersion.equals(version)){
 					    	errorMessage = new Message(MessageType.ERROR, messageID, new ErrorMessage(ErrorType.VERSION_ERROR));
 					    	response = new DFAResponse(errorMessage, true, "Version is invalid");
 							return response;
