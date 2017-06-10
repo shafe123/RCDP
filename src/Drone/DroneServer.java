@@ -75,7 +75,7 @@ public class DroneServer implements Runnable {
 		PASSWORD = passward;
 		DRONE_ID = drone_id;
 		UI = ui;
-		VERSION = "1.2";
+		RandomNum = getRandomNumber();
 
 	}
 	
@@ -121,7 +121,7 @@ public class DroneServer implements Runnable {
 			ServerSocket serverSocket = new ServerSocket(Integer.parseInt(PORT_NUMBER));
 			while(true){
 				Socket clientSocket = serverSocket.accept();
-				new Thread( new DroneListener(PORT_NUMBER,PASSWORD,DRONE_ID,UI,clientSocket)).start();
+				new Thread( new DroneListener(PORT_NUMBER,PASSWORD,DRONE_ID,UI,clientSocket,RandomNum)).start();
 				
 			}
 				
@@ -132,5 +132,14 @@ public class DroneServer implements Runnable {
 		}
 	}
 	
+	/**
+	 * Method used to generate a random number
+	 */
+	public static String getRandomNumber()
+	{
+		Random rand = new Random();
+		int  n = rand.nextInt(1000) + 1;
+		return ""+n;	
+	}
 
 }

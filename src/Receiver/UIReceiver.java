@@ -48,7 +48,7 @@ public class UIReceiver {
 	private StringBuffer log = new StringBuffer();
 	private int LogStringCount = 0;
 	private JScrollPane sp;
-	private JPasswordField passwordField;
+	public JPasswordField passwordField;
 	private JTextField hostnameField;
 	public String VERSION = "1.0";
 	public String RandomNum = getRandomNumber();
@@ -125,7 +125,7 @@ public class UIReceiver {
 		JButton landButton = new JButton("Land");
 		JButton autoButton = new JButton("Auto");
 		JButton propellerButton = new JButton("Propeller");
-		JButton beaconButton = new JButton("Beacon");
+//		JButton beaconButton = new JButton("Beacon");
 		
 		JLabel pw = new JLabel("Password");
 		passwordField = new JPasswordField(10);
@@ -146,7 +146,7 @@ public class UIReceiver {
 		landButton.setActionCommand("Land");
 		autoButton.setActionCommand("Auto");
 		propellerButton.setActionCommand("Propeller");
-		beaconButton.setActionCommand("Beacon");
+//		beaconButton.setActionCommand("Beacon");
 
 		turnOnButton.addActionListener(new ButtonClickListener());
 		turnOffButton.addActionListener(new ButtonClickListener());
@@ -161,7 +161,7 @@ public class UIReceiver {
 		landButton.addActionListener(new ButtonClickListener());
 		autoButton.addActionListener(new ButtonClickListener());
 		propellerButton.addActionListener(new ButtonClickListener());
-		beaconButton.addActionListener(new ButtonClickListener());
+//		beaconButton.addActionListener(new ButtonClickListener());
 
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbs = new GridBagConstraints();
@@ -187,7 +187,7 @@ public class UIReceiver {
 		controlPanel.add(landButton);
 		controlPanel.add(autoButton);
 		controlPanel.add(propellerButton);
-		controlPanel.add(beaconButton);
+//		controlPanel.add(beaconButton);
 
 		gbs.fill = GridBagConstraints.HORIZONTAL;
 		gbs.gridwidth = 7;
@@ -295,17 +295,17 @@ public class UIReceiver {
 		gbs.ipady = 20;
 		gbl.setConstraints(propellerButton, gbs);
 
-		gbs.fill = GridBagConstraints.NONE;
-		gbs.gridwidth = 1;
-		gbs.gridheight = 1;
-		gbs.insets = new Insets(1, 0, 1, 0);
-		gbs.weightx = 1;
-		gbs.weighty = 1;
-		gbs.gridx = 4;
-		gbs.gridy = 2;
-		gbs.ipadx = 50;
-		gbs.ipady = 20;
-		gbl.setConstraints(beaconButton, gbs);
+//		gbs.fill = GridBagConstraints.NONE;
+//		gbs.gridwidth = 1;
+//		gbs.gridheight = 1;
+//		gbs.insets = new Insets(1, 0, 1, 0);
+//		gbs.weightx = 1;
+//		gbs.weighty = 1;
+//		gbs.gridx = 4;
+//		gbs.gridy = 2;
+//		gbs.ipadx = 50;
+//		gbs.ipady = 20;
+//		gbl.setConstraints(beaconButton, gbs);
 
 		gbs.fill = GridBagConstraints.NONE;
 		gbs.gridwidth = 1;

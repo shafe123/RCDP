@@ -70,16 +70,14 @@ public class DroneListener implements Runnable {
 	 * @param ui is the drone graphical user interface of type UIDrone
 	 * @param clientsocket of type Socket
 	 */
-	public DroneListener(String p_number, String passward, String drone_id, UIDrone ui, Socket clientsocket) {
+	public DroneListener(String p_number, String passward, String drone_id, UIDrone ui, Socket clientsocket,String randomNum) {
 		PORT_NUMBER = p_number;
 		PASSWORD = passward;
 		DRONE_ID = drone_id;
 		UI = ui;
-		VERSION = "1.0";
-		RandomNum = getRandomNumber();
+		VERSION = "1.1";
+		RandomNum = randomNum;
 		clientSocket = clientsocket;
-		droneDFA = new DroneDFA(PASSWORD, VERSION, RandomNum, DRONE_ID);
-
 	}
 
 	/**
@@ -135,6 +133,7 @@ public class DroneListener implements Runnable {
 							 * If not authenticated, the first message must be
 							 * receiver hello
 							 */
+							droneDFA = new DroneDFA(PASSWORD, VERSION, RandomNum, DRONE_ID);
 							droneResponse = droneDFA.authenticate(msg);
 
 							/**
@@ -193,13 +192,5 @@ public class DroneListener implements Runnable {
 
 	}
 	
-	/**
-	 * Method used to generate a random number
-	 */
-	public static String getRandomNumber()
-	{
-		Random rand = new Random();
-		int  n = rand.nextInt(1000) + 1;
-		return ""+n;	
-	}
+
 }
