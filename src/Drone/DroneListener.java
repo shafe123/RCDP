@@ -75,7 +75,7 @@ public class DroneListener implements Runnable {
 		PASSWORD = passward;
 		DRONE_ID = drone_id;
 		UI = ui;
-		VERSION = "1.1";
+		VERSION = "1.0";
 		RandomNum = randomNum;
 		clientSocket = clientsocket;
 	}
