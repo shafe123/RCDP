@@ -98,8 +98,9 @@ public class ReadACK implements Runnable {
 						/**
 						 * If not isAuthenticate, the msg is drone hello
 						 */
-						UI.display("Drone Hello Received");
+						
 						if(msg.body instanceof ControlMessage){
+							UI.display("Drone Hello Received");
 							DFAResponse receiverResponse = receiverDFA.authenticate(msg);
 						
 						// if error
